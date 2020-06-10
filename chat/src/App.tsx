@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import SimplePeer from 'simple-peer';
 import Socket from './components/Socket'
 import './App.css';
+import Test from './components/Test';
 
 
 
@@ -9,15 +10,23 @@ import './App.css';
 export interface IAppProps {
 }
 
-export default class App extends Component<IAppProps> {
-  peer: any = null;
-  state = {
-    textInput: '',
-    data: '',
-    connected: false
-  }
+export interface IAppState {
+  textInput: string,
+  data: string,
+  connected: boolean
+}
 
-  onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => this.setState({ [e.target.name]: e.target.value })
+export default class App extends Component<IAppProps, IAppState> {
+  peer: any = null;
+  constructor(props: IAppProps) {
+    super(props)
+    this.state = {
+      textInput: '',
+      data: '',
+      connected: false
+    }
+  }
+  onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => this.setState({ [e.target.name]: e.target.value } as unknown as Pick<IAppState, keyof IAppState>)
 
   componentDidMount() {
     this.createPeer();
@@ -90,6 +99,7 @@ export default class App extends Component<IAppProps> {
           </>
         }
         <Socket />
+        <Test />
       </div>
     );
   }

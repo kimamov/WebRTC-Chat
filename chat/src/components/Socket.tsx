@@ -1,14 +1,11 @@
 import React, { Component } from 'react'
 
-interface Props {
 
-}
-interface State {
-
-}
 
 function initSocket() {
-    const socket = new WebSocket("ws://127.0.0.1:5000");
+    console.log("was called");
+
+    const socket = new WebSocket("ws://127.0.0.1:5000?username=kantemir");
 
     socket.onopen = function (e) {
         console.log("[open] Connection established");
@@ -37,9 +34,31 @@ function initSocket() {
     return socket;
 }
 
+interface Props {
+
+}
+interface State {
+
+}
+
+
+
 export default class Socket extends Component<Props, State> {
-    socket = initSocket();
-    state = {}
+    private socket: WebSocket | null = null;
+    constructor(props: Props) {
+        super(props)
+        console.log("called x times");
+
+        this.state = {
+
+        }
+    }
+
+    componentDidMount() {
+        console.log("mount");
+        this.socket = initSocket();
+    }
+
 
     sendRandomMessage = () => {
         if (!this.socket) return
