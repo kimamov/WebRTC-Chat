@@ -4,7 +4,6 @@ const auth = require('./util/auth');
 const passport = require('passport');
 const routes = require('./routes/routes');
 const initSocketServer = require('./socket/socket');
-const handleUpgrade = require('./socket/handleUpgrade');
 const PORT = 5000;
 
 
