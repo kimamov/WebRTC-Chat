@@ -2,9 +2,27 @@ const http = require('http');
 const WebSocket = require('ws');
 const url = require('url');
 const express = require('express');
+const session = require('express-session');
+const auth = require('./util/auth');
+const passport = require('passport');
 const PORT = 5000;
 
+
 const app = express();
+
+// setup express middlewares
+app.use(session({
+    secret: "nyan",
+    resave: true,
+    saveUninitialized: true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+//setup passport middlewares
+passport.use(auth)
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+})
 
 function getDataAsync(request) {
     return new Promise((resolve, reject) => setTimeout(() => {
@@ -14,13 +32,16 @@ function getDataAsync(request) {
 
 const wss = new WebSocket.Server({
     noServer: true,
-    clientTracking: true,
+    clientTracking: true
 });
 wss.on('connection', (ws, request, data) => {
     const userName = nameFromQuery(request);
     ws.userName = userName;
     ws.send(data);
-    console.log(wss);
+    ws.on('message', data => {
+        console.log(data);
+        ws.send(data);
+    })
 });
 
 function nameFromQuery(request) {
@@ -62,3 +83,17 @@ server.on('upgrade', async (request, socket, head) => {
         wss.emit('connection', ws, request, data);
     });
 });
+
+
+app.get(
+    '/login',
+    passport.authenticate('local', {
+        failureRedirect: '/asd',
+        session: false
+    }),
+    async (req, res) => {
+        req.session.myUser = "hello world";
+        console.log(req.session);
+        console.log("login hit");
+        res.send('you logged in succesfully')
+    })
