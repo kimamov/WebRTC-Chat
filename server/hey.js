@@ -1,10 +1,7 @@
 const http = require('http');
 const WebSocket = require('ws');
-const url = require('url');
 const express = require('express');
-const PORT = 5000;
-
-const app = express();
+const url = require('url');
 
 function getDataAsync(request) {
     return new Promise((resolve, reject) => setTimeout(() => {
@@ -12,15 +9,13 @@ function getDataAsync(request) {
     }, 500));
 }
 
+const app = express();
+const server = http.createServer(app);
+//const server = httpServer.listen(5000);
+server.listen(5000);
 const wss = new WebSocket.Server({
-    noServer: true,
-    clientTracking: true,
-});
-wss.on('connection', (ws, request, data) => {
-    const userName = nameFromQuery(request);
-    ws.userName = userName;
-    ws.send(data);
-    console.log(wss);
+    server: server,
+    clientTracking: true
 });
 
 function nameFromQuery(request) {
@@ -29,10 +24,13 @@ function nameFromQuery(request) {
     return params.get("username")
 }
 
-const server = app.listen(PORT, e => {
-    if (e) return console.log(e)
-    console.log(`server listening on port ${PORT}`)
+wss.on('connection', (ws, request, data) => {
+    const userName = nameFromQuery(request);
+    ws.userName = userName;
+    ws.send(data);
 });
+
+wss.on('message', data => console.log(data))
 
 server.on('upgrade', async (request, socket, head) => {
     let data;
