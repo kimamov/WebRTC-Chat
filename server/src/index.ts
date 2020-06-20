@@ -17,7 +17,7 @@ createConnection()
     // setup express middlewares
     app.use(
       session({
-        secret: "nyan",
+        secret: "nyana",
         resave: true,
         saveUninitialized: true,
       })
