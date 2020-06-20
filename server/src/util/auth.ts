@@ -2,7 +2,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 import { User } from "../entity/User";
 import { getRepository } from "typeorm";
-import bcrypt from "bcrypt";
+import * as bcrypt from "bcrypt";
 
 module.exports = new LocalStrategy(async (username, password, done) => {
   try {
