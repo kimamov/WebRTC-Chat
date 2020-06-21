@@ -1,5 +1,5 @@
-import "reflect-metadata";
 import { createConnection } from "typeorm";
+import { User } from "./entity/User";
 
 createConnection()
   .then(async (connection) => {
@@ -30,6 +30,13 @@ createConnection()
     passport.use(auth);
     passport.serializeUser((user, done) => {
       done(null, user.id);
+    });
+    passport.deserializeUser((userId, done) => {
+      const user = connection.getRepository(User);
+      user
+        .findOne(userId)
+        .then((data) => done(null, data))
+        .catch((error) => done(error));
     });
     //setup routes
     app.use(routes);

@@ -7,8 +7,10 @@ import * as bcrypt from "bcrypt";
 module.exports = new LocalStrategy(async (username, password, done) => {
   try {
     const userRepo = getRepository(User);
-    const user = await userRepo.findOne({ username: username });
-    await bcrypt.compare(password, user.password);
+    const user = await userRepo.findOneOrFail({ username: username });
+    if (!(await bcrypt.compare(password, user.password))) {
+      throw new Error("password not matching");
+    }
     return done(null, user);
   } catch (e) {
     console.log(e);

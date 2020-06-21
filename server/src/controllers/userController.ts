@@ -11,12 +11,10 @@ export async function createUser(userName: string, password: string) {
       console.dir(foundUser);
       // if so you are done here
       if (foundUser) throw new Error("user already exists");
-      // create password hash
-      const hash = await bcrypt.hash(password, 10); // hash password for user
       // create new user
       const user = new User();
       user.username = userName;
-      user.password = hash;
+      user.password = password;
       // save user into the database
       await repo.save(user);
       resolve(userName);
