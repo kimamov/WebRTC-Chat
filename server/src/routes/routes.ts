@@ -2,6 +2,12 @@ const router = require("express").Router();
 const passport = require("passport");
 import { createUser } from "../controllers/userController";
 
+// checkAuth middleware checks if the current requests is authenticated
+function checkAuth(req, res, next) {
+  if (req.isAuthenticated()) return next();
+  next("request not authenticated");
+}
+
 router.post(
   "/login",
   passport.authenticate("local", {
