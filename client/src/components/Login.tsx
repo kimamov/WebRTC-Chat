@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import { Box, Typography, Card, TextField } from '@material-ui/core'
+import { Box, Typography, Button, Card, TextField } from '@material-ui/core'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
+import { useStateContext } from '../state/state'
 
 interface Props {
   login: () => void
@@ -19,15 +20,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const Login = ({ login }: Props) => {
+const Login = () => {
   const classes = useStyles()
+  const { state, dispatch } = useStateContext()
   const [username, setName] = useState('')
   const [password, setPassword] = useState('')
-
+  console.log(state)
   return (
     <Box display="flex" minHeight="100vh">
       <Card className={classes.formCard}>
-        <form onSubmit={login}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            dispatch({ type: 'signIn' })
+          }}
+        >
           <TextField
             label="username"
             value={username}
@@ -46,6 +53,9 @@ const Login = ({ login }: Props) => {
             fullWidth
             className={classes.passwordInput}
           />
+          <Button type="submit" variant="contained" color="primary">
+            SUBMIT
+          </Button>
         </form>
       </Card>
     </Box>

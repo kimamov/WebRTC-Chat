@@ -11,19 +11,22 @@ interface Props {
 }
 export interface StateInterface {
   user: {}
+  darkMode: boolean
 }
 
 export interface ContextInterface {
   state: StateInterface
-  dispatch?: React.Dispatch<{ type: string }>
+  dispatch?: React.Dispatch<{ type: string; payload?: any }>
 }
 
 const initialState: StateInterface = {
   user: {},
+  darkMode: false,
 }
 
 const Store = ({ children }: Props) => {
   const [state, dispatch] = useReducer(reducer, initialState)
+  console.log(state)
   return (
     <Context.Provider value={{ state, dispatch }}>{children}</Context.Provider>
   )

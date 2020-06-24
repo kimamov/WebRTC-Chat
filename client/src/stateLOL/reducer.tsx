@@ -7,6 +7,11 @@ const Reducer = (state: StateInterface, action: any): StateInterface => {
         ...state,
         user: action.payload,
       }
+    case 'TEST':
+      return {
+        ...state,
+        user: 'passed',
+      }
     default:
       return state
   }

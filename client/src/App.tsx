@@ -4,6 +4,7 @@ import './App.css'
 import Login from './components/Login'
 import Chat from './Chat'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
+import { StateProvider } from './state/state'
 
 export interface IAppProps {}
 
@@ -22,18 +23,20 @@ export default class App extends Component<IAppProps, IAppState> {
 
   public render() {
     return (
-      <BrowserRouter>
-        <Box>
-          <Switch>
-            <Route path="/login">
-              <Login login={() => console.log('succesfully logged in')} />
-            </Route>
-            <Route>
-              <Chat />
-            </Route>
-          </Switch>
-        </Box>
-      </BrowserRouter>
+      <StateProvider>
+        <BrowserRouter>
+          <Box>
+            <Switch>
+              <Route path="/login">
+                <Login />
+              </Route>
+              <Route>
+                <Chat />
+              </Route>
+            </Switch>
+          </Box>
+        </BrowserRouter>
+      </StateProvider>
     )
   }
 }
