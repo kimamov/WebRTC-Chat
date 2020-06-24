@@ -1,11 +1,21 @@
-import React, { useReducer, createContext, ReactElement } from 'react'
+import React, {
+  useReducer,
+  createContext,
+  ReactElement,
+  useContext,
+} from 'react'
 import reducer from './reducer'
 
 interface Props {
   children: ReactElement
 }
-interface StateInterface {
+export interface StateInterface {
   user: {}
+}
+
+export interface ContextInterface {
+  state: StateInterface
+  dispatch?: React.Dispatch<{ type: string }>
 }
 
 const initialState: StateInterface = {
@@ -15,9 +25,10 @@ const initialState: StateInterface = {
 const Store = ({ children }: Props) => {
   const [state, dispatch] = useReducer(reducer, initialState)
   return (
-    <Context.Provider value={[state, dispatch]}>{children}</Context.Provider>
+    <Context.Provider value={{ state, dispatch }}>{children}</Context.Provider>
   )
 }
 
-export const Context = createContext(initialState)
+export const Context = createContext<ContextInterface>({ state: initialState })
+export const useStateContext = () => useContext(Context)
 export default Store

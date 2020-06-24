@@ -1,4 +1,6 @@
-const Reducer = (state: any, action: any) => {
+import { StateInterface } from './store'
+
+const Reducer = (state: StateInterface, action: any): StateInterface => {
   switch (action.type) {
     case 'SET_USER':
       return {
