@@ -9,11 +9,10 @@ export default class ThemeWrapper extends Component {
     return (
       <Context.Consumer>
         {({ state }) => (
-          <CssBaseline>
-            <ThemeProvider theme={state.darkMode ? darkTheme : theme}>
-              <Router />
-            </ThemeProvider>
-          </CssBaseline>
+          <ThemeProvider theme={state.darkMode ? darkTheme : theme}>
+            <CssBaseline />
+            <Router />
+          </ThemeProvider>
         )}
       </Context.Consumer>
     )

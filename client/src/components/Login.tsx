@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import { useStateContext } from '../state/state'
 import FormCard from './FormCard'
 import login from '../api/login'
+import { useHistory } from 'react-router-dom'
 
 interface Props {
   login: () => void
@@ -19,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Login = () => {
   const classes = useStyles()
+  const history = useHistory()
   const { state, dispatch } = useStateContext()
   const [username, setName] = useState('')
   const [password, setPassword] = useState('')
@@ -47,12 +49,13 @@ const Login = () => {
     if (!errors) {
       login(username, password)
         .then((data) => data.json())
-        .then((json) =>
+        .then((json) => {
           dispatch({
             type: 'logIn',
             payload: json,
           })
-        )
+          history.push('/')
+        })
         .catch((e) => {
           // tell the user login failed keep it for 4 seconds the remove it
           console.log(e)

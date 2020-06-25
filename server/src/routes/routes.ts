@@ -19,6 +19,7 @@ router.post(
     console.log("login hit");
     res.send({
       message: "you logged in successfully",
+      user: req.user,
     });
   }
 );

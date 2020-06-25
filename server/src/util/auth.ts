@@ -11,6 +11,8 @@ module.exports = new LocalStrategy(async (username, password, done) => {
     if (!(await bcrypt.compare(password, user.password))) {
       throw new Error("password not matching");
     }
+    // no need to share the password
+    delete user.password;
     return done(null, user);
   } catch (e) {
     console.log(e);
