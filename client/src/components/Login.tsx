@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { Box, Button, TextField, FormHelperText } from '@material-ui/core'
-import { makeStyles, useTheme, styled } from '@material-ui/core/styles'
+import { Box, Button, FormHelperText, TextField } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
 import { useStateContext } from '../state/state'
 import FormCard from './FormCard'
 import login from '../api/login'

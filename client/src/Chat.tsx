@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import SimplePeer from 'simple-peer'
 import Socket from './components/Socket'
-import './App.css'
-import Test from './components/Test'
+import { TextField } from '@material-ui/core'
 
 export interface IAppProps {}
 
@@ -75,6 +74,12 @@ export default class Chat extends Component<IAppProps, IAppState> {
   public render() {
     return (
       <div>
+        <TextField
+          color="primary"
+          variant="outlined"
+          size="small"
+          value="hey"
+        />
         <header>
           <p>
             {this.state.connected

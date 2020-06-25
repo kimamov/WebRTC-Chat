@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import './App.css'
 import { StateProvider } from './state/state'
 import ThemeWrapper from './ThemeWrapper'
 

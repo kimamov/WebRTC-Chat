@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import { Box, Button } from '@material-ui/core'
-import './App.css'
+import { Box } from '@material-ui/core'
 import Login from './components/Login'
 import Chat from './Chat'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
