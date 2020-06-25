@@ -4,7 +4,9 @@ import { reducer, Action } from './reducer'
 
 export interface StateContext {
   isAuthenticated: boolean
+  user: any
   contacts: IContact[]
+  darkMode: boolean
 }
 
 export interface Store {
@@ -36,15 +38,22 @@ const data: IContact[] = [
   },
 ]
 
-const defaultState: StateContext = { isAuthenticated: false, contacts: data }
-const myContext = React.createContext<Store>({
+const defaultState: StateContext = {
+  isAuthenticated: false,
+  contacts: data,
+  user: {},
+  darkMode: false,
+}
+export const Context = React.createContext<Store>({
   state: defaultState,
   dispatch: () => {},
 })
 
-export const useStateContext = () => useContext(myContext)
+export const useStateContext = () => useContext(Context)
 
-export const StateProvider = ({ children }: { children: ReactElement }) => {
+export const StateProvider: React.FC<{ children: ReactElement }> = ({
+  children,
+}) => {
   const [state, dispatch] = useReducer(reducer, defaultState)
-  return <myContext.Provider value={{ state, dispatch }} children={children} />
+  return <Context.Provider value={{ state, dispatch }} children={children} />
 }

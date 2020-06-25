@@ -11,8 +11,9 @@ export enum ActionType {
 export type Action =
   | { type: ActionType.ADD_CONTACT; payload: IContact }
   | { type: ActionType.REMOVE_CONTACT; payload: IContact }
-  | { type: 'signIn' }
+  | { type: 'logIn'; payload: any }
   | { type: ActionType.SIGN_OUT }
+  | { type: 'toggleDark' }
 
 export const reducer = (state: StateContext, action: Action) => {
   switch (action.type) {
@@ -23,10 +24,12 @@ export const reducer = (state: StateContext, action: Action) => {
         ...state,
         contacts: state.contacts.filter((c) => c.id === action.payload.id),
       }
-    case 'signIn':
-      return { ...state, isAuthenticated: true }
+    case 'logIn':
+      return { ...state, user: action.payload }
     case ActionType.SIGN_OUT:
       return { ...state, isAuthenticated: false }
+    case 'toggleDark':
+      return { ...state, darkMode: !state.darkMode }
     default:
       throw new Error('Not among actions')
   }
