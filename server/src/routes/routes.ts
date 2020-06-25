@@ -17,7 +17,9 @@ router.post(
     req.session.myUser = "hello world";
     console.log(req.session);
     console.log("login hit");
-    res.send("you logged in successfully");
+    res.send({
+      message: "you logged in successfully",
+    });
   }
 );
 

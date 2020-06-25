@@ -6,6 +6,7 @@ createConnection()
     // setup server once connection to the database is created
     const express = require("express");
     const session = require("express-session");
+    const cors = require("cors");
     const auth = require("./util/auth");
     const passport = require("passport");
     const routes = require("./routes/routes");
@@ -20,6 +21,11 @@ createConnection()
         secret: "nyana",
         resave: true,
         saveUninitialized: true,
+      })
+    );
+    app.use(
+      cors({
+        origin: ["http://localhost:3000", "localhost:3000"],
       })
     );
     app.use(passport.initialize());
