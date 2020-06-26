@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import { Box, Typography } from '@material-ui/core'
+import { Box, Typography, Snackbar } from '@material-ui/core'
 import Login from './components/Login'
 import Chat from './Chat'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import Nav from './components/Nav'
 import ProtectedRoute from './components/ProtectedRoute'
+import Notifications from './components/Notifications'
 
 export interface IAppProps {}
 
@@ -27,6 +28,7 @@ export default class Router extends Component<IAppProps, IAppState> {
               <Chat />
             </ProtectedRoute>
           </Switch>
+          <Notifications />
         </Box>
       </BrowserRouter>
     )

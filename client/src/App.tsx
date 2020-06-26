@@ -3,7 +3,7 @@ import { StateProvider } from './state/state'
 import ThemeWrapper from './ThemeWrapper'
 
 export default class App extends Component {
-  // this only wrapps the app inside the global state
+  // this only wraps the app inside the global state
   public render() {
     return (
       <StateProvider>
