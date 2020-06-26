@@ -57,10 +57,14 @@ const Login = () => {
             payload: json.user,
           })
           // open snackbar and notify user that he successfully logged in
-          /* dispatch({
-            type: 'openSnackbar',
-            payload: 'successfully logged in',
-          }) */
+          dispatch({
+            type: 'createNotification',
+            payload: {
+              type: 'snackbar',
+              alertType: 'success',
+              message: 'successfully logged in',
+            },
+          })
           // go to home after
           history.push('/')
         })
@@ -69,6 +73,14 @@ const Login = () => {
           console.log(e)
           setFormError('could not login')
           setTimeout(() => setFormError(''), 4000)
+          dispatch({
+            type: 'createNotification',
+            payload: {
+              type: 'snackbar',
+              alertType: 'success',
+              message: 'successfully logged in',
+            },
+          })
         })
     }
   }

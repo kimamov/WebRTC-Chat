@@ -1,14 +1,11 @@
 import React from 'react'
 import Button from '@material-ui/core/Button'
 import SnackbarAlert from './SnackbarAlert'
+import { useStateContext } from '../../state/state'
 
 export default function Notifications() {
   // use this to handle all kinds of alerts snackbar modal etc
-  const [open, setOpen] = React.useState(false)
-
-  const handleClick = () => {
-    setOpen(true)
-  }
+  const { state, dispatch } = useStateContext()
 
   const handleClose = (
     event: React.SyntheticEvent | React.MouseEvent,
@@ -18,15 +15,19 @@ export default function Notifications() {
       return
     }
 
-    setOpen(false)
+    dispatch({ type: 'deleteNotification' })
   }
 
   return (
-    <div>
-      <Button onClick={handleClick}>Open simple snackbar</Button>
-      <SnackbarAlert open={open} onClose={handleClose}>
+    <>
+      <SnackbarAlert
+        open={Boolean(
+          state.notification && state.notification.type === 'snackbar'
+        )}
+        onClose={handleClose}
+      >
         successfully logged in
       </SnackbarAlert>
-    </div>
+    </>
   )
 }

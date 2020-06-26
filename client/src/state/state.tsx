@@ -1,10 +1,11 @@
 import React, { useContext, useReducer, ReactElement } from 'react'
 import { reducer, Action } from './reducer'
-
+import { Notification } from '../types/types'
 export interface StateContext {
   isAuthenticated: boolean
   user: any
   darkMode: boolean
+  notification: null | Notification
 }
 
 export interface Store {
@@ -16,6 +17,7 @@ const defaultState: StateContext = {
   isAuthenticated: false,
   user: null,
   darkMode: false,
+  notification: null,
 }
 export const Context = React.createContext<Store>({
   state: defaultState,

@@ -15,8 +15,7 @@ router.post(
   }),
   async (req, res) => {
     req.session.myUser = "hello world";
-    console.log(req.session);
-    console.log("login hit");
+
     res.send({
       message: "you logged in successfully",
       user: req.user,
