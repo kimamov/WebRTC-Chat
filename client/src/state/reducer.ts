@@ -1,5 +1,4 @@
 import { StateContext } from './state'
-import { IContact } from './Contact'
 
 export enum ActionType {
   ADD_CONTACT = 'Add contact',
@@ -9,21 +8,12 @@ export enum ActionType {
 }
 
 export type Action =
-  | { type: ActionType.ADD_CONTACT; payload: IContact }
-  | { type: ActionType.REMOVE_CONTACT; payload: IContact }
   | { type: 'logIn'; payload: any }
   | { type: ActionType.SIGN_OUT }
   | { type: 'toggleDark' }
 
 export const reducer = (state: StateContext, action: Action) => {
   switch (action.type) {
-    case ActionType.ADD_CONTACT:
-      return { ...state, contacts: state.contacts.concat(action.payload) }
-    case ActionType.REMOVE_CONTACT:
-      return {
-        ...state,
-        contacts: state.contacts.filter((c) => c.id === action.payload.id),
-      }
     case 'logIn':
       return { ...state, user: action.payload }
     case ActionType.SIGN_OUT:

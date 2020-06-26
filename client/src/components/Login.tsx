@@ -50,10 +50,18 @@ const Login = () => {
       login(username, password)
         .then((data) => data.json())
         .then((json) => {
+          // check if response has the required field
+          if (!json.user) throw new Error('invalid response')
           dispatch({
             type: 'logIn',
-            payload: json,
+            payload: json.user,
           })
+          // open snackbar and notify user that he successfully logged in
+          /* dispatch({
+            type: 'openSnackbar',
+            payload: 'successfully logged in',
+          }) */
+          // go to home after
           history.push('/')
         })
         .catch((e) => {

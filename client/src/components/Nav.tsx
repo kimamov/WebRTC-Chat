@@ -10,14 +10,16 @@ import {
 } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
 import RouterLink from './RouterLink'
+import NavUserDisplay from './NavUserDisplay'
 
 interface Props {}
 
-const StyledSwitch = withStyles({
+const StyledSwitch = withStyles((theme) => ({
   root: {
-    marginLeft: 'auto',
+    //marginLeft: 'auto',
+    marginLeft: theme.spacing(2),
   },
-})(Switch)
+}))(Switch)
 
 const StyledLink = withStyles((theme) => ({
   root: {
@@ -37,7 +39,7 @@ const Nav = (props: Props) => {
         <Typography variant="h6" color="inherit">
           Chat
         </Typography>
-        <StyledLink to="/login">LOGIN</StyledLink>
+        <NavUserDisplay />
         <StyledSwitch onChange={() => dispatch({ type: 'toggleDark' })} />
       </Toolbar>
     </AppBar>
