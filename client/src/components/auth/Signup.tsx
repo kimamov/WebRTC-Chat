@@ -1,22 +1,13 @@
 import React, { useState } from 'react'
 import { Box, Button, FormHelperText, TextField } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
 import { useStateContext } from '../../state/state'
 import FormCard from '../FormCard'
 import login from '../../api/login'
 import { useHistory } from 'react-router-dom'
+import { authFormStyles } from '../../styles/styles'
 
-const useStyles = makeStyles((theme) => ({
-  formCard: {
-    margin: 'auto',
-  },
-  marginTop: {
-    marginTop: theme.spacing(2),
-  },
-}))
-
-const Signup = () => {
-  const classes = useStyles()
+const SignUp = () => {
+  const classes = authFormStyles()
   const history = useHistory()
   const { dispatch } = useStateContext()
   const [username, setName] = useState('')
@@ -87,8 +78,8 @@ const Signup = () => {
 
   return (
     <Box display="flex" minHeight="100vh">
-      <FormCard className={classes.formCard}>
-        <form onSubmit={submit}>
+      <FormCard>
+        <form className={classes.root} onSubmit={submit}>
           <TextField
             label="username"
             value={username}
@@ -105,7 +96,6 @@ const Signup = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             variant="outlined"
-            className={classes.marginTop}
             type="password"
             fullWidth
             required
@@ -114,7 +104,7 @@ const Signup = () => {
           />
 
           <Button
-            className={classes.marginTop}
+            className={classes.submitButton}
             type="submit"
             variant="contained"
             color="primary"
@@ -130,4 +120,4 @@ const Signup = () => {
   )
 }
 
-export default Signup
+export default SignUp

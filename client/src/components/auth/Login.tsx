@@ -1,22 +1,13 @@
 import React, { useState } from 'react'
 import { Box, Button, FormHelperText, TextField } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
 import { useStateContext } from '../../state/state'
 import FormCard from '../FormCard'
 import login from '../../api/login'
 import { useHistory } from 'react-router-dom'
-
-const useStyles = makeStyles((theme) => ({
-  formCard: {
-    margin: 'auto',
-  },
-  marginTop: {
-    marginTop: theme.spacing(2),
-  },
-}))
+import { authFormStyles } from '../../styles/styles'
 
 const Login = () => {
-  const classes = useStyles()
+  const classes = authFormStyles()
   const history = useHistory()
   const { dispatch } = useStateContext()
   const [username, setName] = useState('')
@@ -87,14 +78,15 @@ const Login = () => {
 
   return (
     <Box display="flex" minHeight="100vh">
-      <FormCard className={classes.formCard}>
-        <form onSubmit={submit}>
+      <FormCard>
+        <form className={classes.root} onSubmit={submit}>
           <TextField
             label="username"
             value={username}
             onChange={(e) => setName(e.target.value)}
             variant="outlined"
             fullWidth
+            size="small"
             required
             error={!!nameError}
             helperText={nameError}
@@ -105,16 +97,16 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             variant="outlined"
-            className={classes.marginTop}
             type="password"
             fullWidth
+            size="small"
             required
             error={!!passwordError}
             helperText={passwordError}
           />
 
           <Button
-            className={classes.marginTop}
+            className={classes.submitButton}
             type="submit"
             variant="contained"
             color="primary"

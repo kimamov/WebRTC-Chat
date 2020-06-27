@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Box, Typography, Snackbar } from '@material-ui/core'
-import Login from './components/Login'
+import Login from './components/auth/Login'
 import Chat from './Chat'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import Nav from './components/Nav'
