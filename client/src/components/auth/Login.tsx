@@ -1,14 +1,11 @@
 import React, { useState } from 'react'
 import { Box, Button, FormHelperText, TextField } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import { useStateContext } from '../state/state'
-import FormCard from './FormCard'
-import login from '../api/login'
+import { useStateContext } from '../../state/state'
+import FormCard from '../FormCard'
+import login from '../../api/login'
 import { useHistory } from 'react-router-dom'
 
-interface Props {
-  login: () => void
-}
 const useStyles = makeStyles((theme) => ({
   formCard: {
     margin: 'auto',
@@ -21,32 +18,35 @@ const useStyles = makeStyles((theme) => ({
 const Login = () => {
   const classes = useStyles()
   const history = useHistory()
-  const { state, dispatch } = useStateContext()
+  const { dispatch } = useStateContext()
   const [username, setName] = useState('')
   const [password, setPassword] = useState('')
   const [nameError, setNameError] = useState('')
   const [passwordError, setPasswordError] = useState('')
   const [formError, setFormError] = useState('')
-  console.log(state)
 
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // validate input and count errors (maybe do onInput validation not to sure)
-    let errors = 0
+  const validate = () => {
+    let passed = true
     if (!username) {
       setNameError('name is required')
-      errors++
+      passed = false
     }
     if (username.length < 4) {
       setNameError('min length for name is 4')
-      errors++
+      passed = false
     }
     if (password.length < 6) {
       setPasswordError('min length for password is 6')
-      errors++
+      passed = false
     }
+    return passed
+  }
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault()
+
     // if no errors try to submit
-    if (!errors) {
+    if (validate()) {
       login(username, password)
         .then((data) => data.json())
         .then((json) => {
@@ -77,8 +77,8 @@ const Login = () => {
             type: 'createNotification',
             payload: {
               type: 'snackbar',
-              alertType: 'success',
-              message: 'successfully logged in',
+              alertType: 'error',
+              message: 'could not log in',
             },
           })
         })

@@ -29,7 +29,6 @@ const StyledLink = withStyles((theme) => ({
 
 const Nav = (props: Props) => {
   const { state, dispatch } = useStateContext()
-  console.log(state)
   return (
     <AppBar position="static">
       <Toolbar variant="dense">
