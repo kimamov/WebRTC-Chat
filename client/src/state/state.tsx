@@ -26,9 +26,16 @@ export const Context = React.createContext<Store>({
 
 export const useStateContext = () => useContext(Context)
 
+// check if localStorage has some state otherwise apply default state
+const persistentState=(defaultState: StateContext): StateContext=>{
+  const data=localStorage.getItem('chatState');
+  if(data) return JSON.parse(data); // if there id data hydrate the default state with it
+  return defaultState // otherwise return the normal default state
+}
+
 export const StateProvider: React.FC<{ children: ReactElement }> = ({
   children,
 }) => {
-  const [state, dispatch] = useReducer(reducer, defaultState)
+  const [state, dispatch] = useReducer(reducer, persistentState(defaultState))
   return <Context.Provider value={{ state, dispatch }} children={children} />
 }

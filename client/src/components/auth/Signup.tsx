@@ -9,7 +9,7 @@ import { authFormStyles } from '../../styles/styles'
 const SignUp = () => {
   const classes = authFormStyles()
   const history = useHistory()
-  // 
+  
   const { dispatch } = useStateContext()
 
   const [username, setName] = useState('')

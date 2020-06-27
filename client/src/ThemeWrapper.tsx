@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import theme, { darkTheme } from './theme/theme'
 import { ThemeProvider, CssBaseline } from '@material-ui/core'
 import { Context } from './state/state'
-import Router from './Router'
+import App from './App'
 
 export default class ThemeWrapper extends Component {
   render() {
@@ -11,7 +11,7 @@ export default class ThemeWrapper extends Component {
         {({ state }) => (
           <ThemeProvider theme={state.darkMode ? darkTheme : theme}>
             <CssBaseline />
-            <Router />
+            <App/>
           </ThemeProvider>
         )}
       </Context.Consumer>
