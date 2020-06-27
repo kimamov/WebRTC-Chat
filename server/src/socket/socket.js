@@ -6,8 +6,8 @@ module.exports = function initSocketServer(server) {
         clientTracking: true
     });
     wss.on('connection', (ws, request, data) => {
-        /* const userName = nameFromQuery(request); */
-        ws.userName = "userName";
+        /* const username = nameFromQuery(request); */
+        ws.username = "username";
         ws.send(data);
         ws.on('message', data => {
             console.log(data);

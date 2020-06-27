@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { Box, Button, FormHelperText, TextField } from '@material-ui/core'
+import { Box, Button, FormHelperText, TextField, Typography } from '@material-ui/core'
 import { useStateContext } from '../../state/state'
 import FormCard from '../FormCard'
-import login from '../../api/login'
+import {login} from '../../api/api'
 import { useHistory } from 'react-router-dom'
 import { authFormStyles } from '../../styles/styles'
 
@@ -35,7 +35,6 @@ const Login = () => {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
-
     // if no errors try to submit
     if (validate()) {
       login(username, password)
@@ -78,9 +77,13 @@ const Login = () => {
 
   return (
     <Box display="flex" minHeight="100vh">
-      <FormCard>
+      <FormCard elevation={4}>
+        <Typography align='center' display='block' variant="h4">
+          Login
+        </Typography>
         <form className={classes.root} onSubmit={submit}>
           <TextField
+            name="username"
             label="username"
             value={username}
             onChange={(e) => setName(e.target.value)}
@@ -93,7 +96,8 @@ const Login = () => {
           />
 
           <TextField
-            label="username"
+            name="password"
+            label="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             variant="outlined"

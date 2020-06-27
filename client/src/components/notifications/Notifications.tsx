@@ -17,15 +17,18 @@ export default function Notifications() {
     dispatch({ type: 'deleteNotification' })
   }
 
+  const isOpen=(type: string)=>{
+    return Boolean(state.notification && state.notification.type === type)
+  }
+
   return (
     <>
       <SnackbarAlert
-        open={Boolean(
-          state.notification && state.notification.type === 'snackbar'
-        )}
+        open={isOpen('snackbar')}
         onClose={handleClose}
+        severity={state.notification?.alertType}
       >
-        successfully logged in
+        {state.notification?.message}
       </SnackbarAlert>
     </>
   )

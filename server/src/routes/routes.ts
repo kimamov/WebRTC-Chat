@@ -37,12 +37,12 @@ router.get("/testuser", (req, res) => {
 
 router.post("/signup", async (req, res) => {
   try {
-    const { userName, password } = req.body;
-    if (!userName || !password) {
+    const { username, password } = req.body;
+    if (!username || !password) {
       // if no user / password found dont bother trying to signup
       return res.status(500).send("no username or password found");
     }
-    const user = await createUser(userName, password);
+    const user = await createUser(username, password);
     return res.status(201).send("succesfully created user: " + user);
   } catch (e) {
     // status conflict most likely user with that name already exists

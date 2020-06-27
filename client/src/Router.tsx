@@ -6,6 +6,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import Nav from './components/Nav'
 import ProtectedRoute from './components/ProtectedRoute'
 import Notifications from './components/notifications/Notifications'
+import SignUp from './components/auth/Signup'
 
 export interface IAppProps {}
 
@@ -22,6 +23,9 @@ export default class Router extends Component<IAppProps, IAppState> {
           <Switch>
             <Route path="/login">
               <Login />
+            </Route>
+            <Route path="/signup">
+              <SignUp/>
             </Route>
             <Route path="/welcome">
               <Typography>Welcome :)</Typography>
