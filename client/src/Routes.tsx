@@ -28,7 +28,7 @@ export default class Routes extends Component<IAppProps, IAppState> {
             </Route>
             <ProtectedRoute redirectPath="/welcome">
               <Chat />
-            </ProtectedRoute>
+            </ProtectedRoute>ſ
           </Switch>
     )
   }
