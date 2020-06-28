@@ -8,9 +8,45 @@
 <body>
     <main>
         test passed
+        <button onclick="logIn()">login</button>
+
+        <button onclick="sendMessage()">send data</button>
     </main>
     <script>
-        alert("hey")
+        const ws=new WebSocket('ws://localhost:5000/socket');
+        console.log(ws)
+        ws.onopen=function(){
+            ws.send('hey server')
+        }
+        ws.onerror=function(error){
+            console.log(error)
+        }
+        ws.onmessage=function(message){
+            console.log(message.data)
+        }
+        ws.onclose=function(){
+            alert('connection closed')
+        }
+        function sendMessage(){
+            console.log("asd")
+            //if(ws.readyState!=='OPEN') return;
+            ws.send('hello world')
+        }
+        function logIn(){
+            fetch('http://localhost:5000/login',{
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: 'kantemir',
+                    password: 'kantemir'
+                })
+            })
+            .then(()=>console.log('succes'))
+            .catch(e=>console.log(e))
+        }
     </script>
 </body>
 </html>
