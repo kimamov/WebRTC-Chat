@@ -10,6 +10,7 @@ export enum ActionType {
 
 export type Action =
   | { type: 'logIn'; payload: any }
+  | {type: 'logOut'}
   | { type: ActionType.SIGN_OUT }
   | { type: 'toggleDark' }
   | { type: 'createNotification'; payload: Notification }
@@ -19,6 +20,8 @@ export const reducer = (state: StateContext, action: Action) => {
   switch (action.type) {
     case 'logIn':
       return { ...state, user: action.payload }
+    case 'logOut':
+      return {...state, user: null}
     case ActionType.SIGN_OUT:
       return { ...state, isAuthenticated: false }
     case 'toggleDark':

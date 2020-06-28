@@ -1,12 +1,19 @@
 const http = require('http');
+import {sessionParser} from '../config'
 
 module.exports = async function handleUpgrade(request, socket, head, wss) {
     let data;
 
     try {
-        console.log(request.httpRequest)
-        console.log(request.httpRequest.session);
-        console.log(request.user)
+        sessionParser(request, {}, ()=>{
+            console.dir(request.session)
+            console.dir(request.session.userId)
+            console.dir(request.session.passport)
+            console.dir(request.passport)
+            console.dir(request.user)
+            console.dir(request.isAthenticated())
+
+        })
         data = await Promise.resolve("hello world");
     } catch (error) {
         const res = new http.ServerResponse({

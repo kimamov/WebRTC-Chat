@@ -3,7 +3,7 @@ const handleUpgrade = require('./handleUpgrade');
 module.exports = function initSocketServer(server) {
     const wss = new(require('ws')).Server({
         noServer: true,
-        clientTracking: true
+        clientTracking: true,
     });
     wss.on('connection', (ws, request, data) => {
         /* const username = nameFromQuery(request); */

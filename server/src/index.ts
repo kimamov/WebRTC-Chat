@@ -1,5 +1,6 @@
 import { createConnection } from "typeorm";
 import { User } from "./entity/User";
+import {sessionParser} from './config'
 
 createConnection()
   .then(async (connection) => {
@@ -17,15 +18,12 @@ createConnection()
 
     // setup express middlewares
     app.use(
-      session({
-        secret: "nyana",
-        resave: true,
-        saveUninitialized: true,
-      })
+      sessionParser
     );
     app.use(
       cors({
         origin: ["http://localhost:3000", "localhost:3000"],
+        credentials: true
       })
     );
     app.use(passport.initialize());

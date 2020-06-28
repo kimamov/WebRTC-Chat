@@ -8,6 +8,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import InboxIcon from '@material-ui/icons/MoveToInbox'
 import DraftsIcon from '@material-ui/icons/Drafts'
 import SendIcon from '@material-ui/icons/Send'
+import { useStateContext } from '../state/state'
 
 const StyledMenu = withStyles({
   paper: {
@@ -41,6 +42,7 @@ const StyledMenuItem = withStyles((theme) => ({
 }))(MenuItem)
 
 export default function NavUserMenu() {
+  const {dispatch}=useStateContext();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -81,11 +83,13 @@ export default function NavUserMenu() {
           </ListItemIcon>
           <ListItemText primary="Drafts" />
         </StyledMenuItem>
-        <StyledMenuItem>
+        <StyledMenuItem onClick={
+          ()=>dispatch({type: 'logOut'})
+        }>
           <ListItemIcon>
             <InboxIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText primary="Inbox" />
+          <ListItemText primary="log out" />
         </StyledMenuItem>
       </StyledMenu>
     </div>
