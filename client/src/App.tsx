@@ -14,7 +14,7 @@ interface Props {
 const App = (props: Props) => {
     const {state}=useStateContext();
     useEffect(() => {
-        test().then(data=>console.log(data)).catch(e=>console.log(e));
+        //test().then(data=>console.log(data)).catch(e=>console.log(e));
         
         window.addEventListener('beforeunload',()=>{
             alert("hey")

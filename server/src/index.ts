@@ -1,5 +1,4 @@
 import { createConnection } from "typeorm";
-import * as path from 'path'
 import { User } from "./entity/User";
 import {sessionParser} from './config'
 
@@ -11,14 +10,13 @@ createConnection()
     const auth = require("./util/auth");
     const passport = require("passport");
     const routes = require("./routes/routes");
-    const initSocketRoutes = require("./socket/socket");
+    const initSocketServer = require("./socket/socket");
 
     const PORT = 5000;
 
     const app = express();
  
     app.set('view engine', 'ejs');
-    const expressWs = require('express-ws')(app);
 
     // setup express middlewares
     app.use(
@@ -49,10 +47,7 @@ createConnection()
     
 
     //setup routes
-    app.use(routes);
-
-    //setup websocket stuff
-    initSocketRoutes(app);
+    app.use(routes);    
 
     // express server listen on PORT
     const server = app.listen(PORT, (e: Error) => {
@@ -61,5 +56,6 @@ createConnection()
     });
 
     // create websocket server
+    initSocketServer(server);
   })
   .catch((error) => console.log(error));

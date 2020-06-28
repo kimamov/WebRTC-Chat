@@ -24,11 +24,8 @@ router.get("/logout", (req, res) => {
   res.send("successfully logged out");
 });
 
-router.get("/testuser",checkAuth, (req, res) => {
-  console.log("test");
+router.get("/testuser", (req, res) => {
   console.dir(req.session)
-  console.log(req.user);
-  console.log(req.isAuthenticated());
   req.session.testData="hello world"
   res.send("got user");
 });
