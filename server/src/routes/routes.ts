@@ -30,8 +30,11 @@ router.get("/logout", (req, res) => {
 });
 
 router.get("/testuser", (req, res) => {
-  console.log(req.session);
+  console.log("test");
+  console.dir(req.session)
+  console.log(req.user);
   console.log(req.isAuthenticated());
+  req.session.testData="hello world"
   res.send("got user");
 });
 

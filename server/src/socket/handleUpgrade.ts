@@ -3,15 +3,12 @@ import {sessionParser} from '../config'
 
 module.exports = async function handleUpgrade(request, socket, head, wss) {
     let data;
+    console.dir(request.headers)
 
     try {
         sessionParser(request, {}, ()=>{
             console.dir(request.session)
-            console.dir(request.session.userId)
-            console.dir(request.session.passport)
-            console.dir(request.passport)
-            console.dir(request.user)
-            console.dir(request.isAthenticated())
+            console.dir(request.session.cookie)
 
         })
         data = await Promise.resolve("hello world");

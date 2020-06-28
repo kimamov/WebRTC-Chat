@@ -4,6 +4,7 @@ import Nav from './components/Nav'
 import Notifications from './components/notifications/Notifications'
 import Routes from './Routes'
 import { useStateContext } from './state/state'
+import { test } from './api/api'
 
 interface Props {
     
@@ -13,7 +14,8 @@ interface Props {
 const App = (props: Props) => {
     const {state}=useStateContext();
     useEffect(() => {
-        console.log("asd")
+        test().then(data=>console.log(data)).catch(e=>console.log(e));
+        
         window.addEventListener('beforeunload',()=>{
             alert("hey")
             localStorage.setItem('chatState', JSON.stringify(state))

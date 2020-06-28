@@ -9,6 +9,7 @@ import InboxIcon from '@material-ui/icons/MoveToInbox'
 import DraftsIcon from '@material-ui/icons/Drafts'
 import SendIcon from '@material-ui/icons/Send'
 import { useStateContext } from '../state/state'
+import { logOut } from '../api/api'
 
 const StyledMenu = withStyles({
   paper: {
@@ -53,6 +54,17 @@ export default function NavUserMenu() {
     setAnchorEl(null)
   }
 
+  const handleLogOut=async()=>{
+    try{
+      await logOut()
+      dispatch({type: 'logOut'})
+    }
+    catch(e){
+      console.log(e);
+      dispatch({type: 'logOut'})
+    }
+  }
+
   return (
     <div>
       <Button
@@ -83,9 +95,7 @@ export default function NavUserMenu() {
           </ListItemIcon>
           <ListItemText primary="Drafts" />
         </StyledMenuItem>
-        <StyledMenuItem onClick={
-          ()=>dispatch({type: 'logOut'})
-        }>
+        <StyledMenuItem onClick={handleLogOut}>
           <ListItemIcon>
             <InboxIcon fontSize="small" />
           </ListItemIcon>

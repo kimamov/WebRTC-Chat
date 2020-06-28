@@ -1,6 +1,6 @@
 import handleError from './error'
 
-export async function login(username: string, password: string) {
+export function login(username: string, password: string) {
   return fetch('http://localhost:5000/login', {
     method: 'POST',
     credentials:'include',
@@ -15,7 +15,7 @@ export async function login(username: string, password: string) {
 }
 
 
-export async function signUp(username: string, password: string) {
+export function signUp(username: string, password: string) {
     return fetch('http://localhost:5000/signup', {
       method: 'POST',
       credentials:'include',
@@ -29,8 +29,14 @@ export async function signUp(username: string, password: string) {
     }).then(handleError)
   }
 
-export async function logOut(){
+export function logOut(){
   return fetch('http://localhost:5000/logout', {
     credentials: 'include'
   })
+}
+
+export function test(){
+  return fetch('http://localhost:5000/testuser',{
+    credentials: 'include'
+  }).then(handleError);
 }
