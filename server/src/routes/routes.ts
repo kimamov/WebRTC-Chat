@@ -1,12 +1,7 @@
 const router = require("express").Router();
 const passport = require("passport");
 import { createUser } from "../controllers/userController";
-
-// checkAuth middleware checks if the current requests is authenticated
-function checkAuth(req, res, next) {
-  if (req.isAuthenticated()) return next();
-  next("request not authenticated");
-}
+import { checkAuth} from '../middlewares/middlewares';
 
 router.post(
   "/login",
@@ -29,7 +24,7 @@ router.get("/logout", (req, res) => {
   res.send("successfully logged out");
 });
 
-router.get("/testuser", (req, res) => {
+router.get("/testuser",checkAuth, (req, res) => {
   console.log("test");
   console.dir(req.session)
   console.log(req.user);
@@ -52,5 +47,10 @@ router.post("/signup", async (req, res) => {
     res.status(409).send(e);
   }
 });
+
+router.get("/testpage",(req, res)=>{
+  res.render('index');
+})
+
 
 module.exports = router;

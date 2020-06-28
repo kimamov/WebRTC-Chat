@@ -5,7 +5,7 @@ import React, { Component } from 'react'
 function initSocket() {
     console.log("was called");
 
-    const socket = new WebSocket("ws://127.0.0.1:5000/chat?username=kantemir");
+    const socket = new WebSocket("ws://127.0.0.1:5000/socket");
 
     socket.onopen = function (e) {
         console.log("[open] Connection established");

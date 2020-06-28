@@ -1,4 +1,5 @@
 import { createConnection } from "typeorm";
+import * as path from 'path'
 import { User } from "./entity/User";
 import {sessionParser} from './config'
 
@@ -6,15 +7,18 @@ createConnection()
   .then(async (connection) => {
     // setup server once connection to the database is created
     const express = require("express");
-    const session = require("express-session");
     const cors = require("cors");
     const auth = require("./util/auth");
     const passport = require("passport");
     const routes = require("./routes/routes");
-    const initSocketServer = require("./socket/socket");
+    const initSocketRoutes = require("./socket/socket");
+
     const PORT = 5000;
 
     const app = express();
+ 
+    app.set('view engine', 'ejs');
+    const expressWs = require('express-ws')(app);
 
     // setup express middlewares
     app.use(
@@ -42,8 +46,13 @@ createConnection()
         .then((data) => done(null, data))
         .catch((error) => done(error));
     });
+    
+
     //setup routes
     app.use(routes);
+
+    //setup websocket stuff
+    initSocketRoutes(app);
 
     // express server listen on PORT
     const server = app.listen(PORT, (e: Error) => {
@@ -52,6 +61,5 @@ createConnection()
     });
 
     // create websocket server
-    const ws = initSocketServer(server);
   })
   .catch((error) => console.log(error));
