@@ -1,13 +1,13 @@
 import { createConnection } from "typeorm";
 import { User } from "./entity/User";
-import {sessionParser} from './config'
+import { sessionParser } from './config'
 
 createConnection()
   .then(async (connection) => {
     // setup server once connection to the database is created
     const express = require("express");
     const cors = require("cors");
-    const auth = require("./util/auth");
+    const auth = require("./util/passportStrategies");
     const passport = require("passport");
     const routes = require("./routes/routes");
     const initSocketServer = require("./socket/socket");
@@ -15,7 +15,7 @@ createConnection()
     const PORT = 5000;
 
     const app = express();
- 
+
     app.set('view engine', 'ejs');
 
     // setup express middlewares
@@ -44,10 +44,10 @@ createConnection()
         .then((data) => done(null, data))
         .catch((error) => done(error));
     });
-    
+
 
     //setup routes
-    app.use(routes);    
+    app.use(routes);
 
     // express server listen on PORT
     const server = app.listen(PORT, (e: Error) => {

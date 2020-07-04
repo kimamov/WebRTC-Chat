@@ -1,15 +1,20 @@
 const http = require('http');
-import {sessionParser} from '../config'
-const url=require('url')
+import { sessionParser } from '../config'
+import { getUser } from '../util/auth';
+import { User } from '../entity/User';
+const url = require('url')
 
 module.exports = async function handleUpgrade(request, socket, head, wss) {
     let data;
 
     try {
-        const parsedUrl=url.parse(request.url, true);
-        const username=parsedUrl.query.username;
-        if(!username) Promise.reject();
-        request.user=username;
+        const parsedUrl = url.parse(request.url, true);
+        const { username, password } = parsedUrl.query;
+        if (!username || !password) throw new Error("either username or password missing in the query string");
+        /* get user object from username and password */
+        const user: User = await getUser(username, password);
+        if (!user || !user.id || !user.username) throw new Error("received invalid data from database");
+        request.user = user;
         console.log(request.user)
         /* this will handle auth in the future
          looks like auth for sockets is not possible without beeing on the same origin 
@@ -23,7 +28,6 @@ module.exports = async function handleUpgrade(request, socket, head, wss) {
             console.log("done")
         }) */
         /* end auth */
-        data = await Promise.resolve("hello world");
     } catch (error) {
         console.log(error)
         const res = new http.ServerResponse({

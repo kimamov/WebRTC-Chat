@@ -1,23 +1,29 @@
 import { Http2Server } from "http2";
-import * as WebSocket from 'ws';
+//import * as WebSocket from 'ws';
+//import { WebSocket } from 'ws'
+const WebSocket = require('ws')
 
 const handleUpgrade = require('./handleUpgrade');
 
+export const UserMap = new Map<string, any>()
 
 module.exports = function initSocketServer(server: Http2Server) {
     const wss = new WebSocket.Server({
         noServer: true,
-        clientTracking: true
+        /* clientTracking: true */
     });
     wss.on('connection', (ws, request, data) => {
-        ws.user=request.user;
-        ws.send(data);
+        ws.user = request.user;
+        UserMap.set(request.user.id, ws);
+        /* tell all users that are your friends and online that you are online  */
+        console.log(UserMap)
+        //ws.send(data);
         ws.on('message', data => {
-            console.log(data+"_"+ws.user);
+            console.log(data + "_" + ws.user);
             ws.send(data);
-            wss.clients.forEach(client=>{
-                if(client.readyState===WebSocket.OPEN){
-                    client.send(ws.user)
+            UserMap.forEach(client => {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(ws.user.username)
                 }
             })
         })
