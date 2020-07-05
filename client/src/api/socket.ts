@@ -1,9 +1,4 @@
-import React, { Component } from 'react'
-import { Context } from '../state/state';
-
-
-
-function initSocket(username: string, password: string) {
+export function initSocket(username: string, password: string) {
     if (!username) return null
     // todo once client and server run on the same oirigin go back to cookie auth
     const socket = new WebSocket("ws://127.0.0.1:5000?username=" + username + "&password=" + password);
@@ -11,7 +6,10 @@ function initSocket(username: string, password: string) {
     socket.onopen = function (e) {
         console.log("[open] Connection established");
         console.log("Sending to server");
-        socket.send("hey server");
+        socket.send(JSON.stringify({
+            type: 'message',
+            data: 'hey'
+        }));
     };
 
     socket.onmessage = function (event) {
@@ -33,40 +31,4 @@ function initSocket(username: string, password: string) {
     };
 
     return socket;
-}
-
-interface Props {
-
-}
-interface State {
-
-}
-
-
-
-export default class Socket extends Component<Props, State> {
-    static contextType = Context;
-    private socket: WebSocket | null = null;
-
-
-    componentDidMount() {
-        console.log(this.context)
-        this.socket = initSocket(this.context?.state?.user?.username, "kantemir");
-    }
-
-
-    sendRandomMessage = () => {
-        if (!this.socket) return
-        console.log("was called");
-        this.socket.send("hey thats a test");
-    }
-
-
-    render() {
-        return (
-            <div>
-                <button onClick={this.sendRandomMessage}>send message</button>
-            </div>
-        )
-    }
 }

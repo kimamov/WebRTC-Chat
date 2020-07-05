@@ -1,4 +1,5 @@
 import { Http2Server } from "http2";
+import { User } from "../entity/User";
 //import * as WebSocket from 'ws';
 //import { WebSocket } from 'ws'
 const WebSocket = require('ws')
@@ -19,56 +20,74 @@ module.exports = function initSocketServer(server: Http2Server) {
     });
     wss.on('connection', (ws, request, data) => {
         ws.user = request.user;
-        UserMap.set(request.user.id, ws);
+        if (UserMap.has(String(request.user.id))) {
+            // if socket with the same key exists delete it
+            // only for local testing
+            UserMap.delete(String(request.user.id))
+        }
+        UserMap.set(String(request.user.id), ws);
         /* tell all users that are your friends and online that you are online  */
-        console.log(UserMap)
+        printActiveSocketIds(UserMap);
         //ws.send(data);
-        ws.on('message', (message: SocketMessage) => {
-            switch (message.type) {
-                case 'fffer':
-                    sendOffer(message.payload, ws);
-                    break;
-                case 'answer':
-                    answerOffer(message.payload, ws);
-                    break;
-                case 'iceCandidate':
-                    handleIceCandidate(message.payload, ws);
-                    break;
-                default:
-                    ws.send({
-                        type: 'message',
-                        data: 'server is listening but this is no valid message type :)'
-                    })
+        ws.on('message', (incomingMessage: string) => {
+            ws.send(JSON.stringify({ message: "you passed" }));
+            try {
+                const message = JSON.parse(incomingMessage);
+                switch (message.type) {
+                    case 'offer':
+                        sendOffer(message.payload, ws);
+                        break;
+                    case 'answer':
+                        answerOffer(message.payload, ws);
+                        break;
+                    case 'iceCandidate':
+                        handleIceCandidate(message.payload, ws);
+                        break;
+                    default:
+                        sendJsonTo(ws, {
+                            type: 'message',
+                            data: 'server is listening but this is no valid message type :)'
+                        })
 
+                }
+            } catch (e) {
+                console.log(e);
+                console.log("failed to parse json");
+                return;
             }
-            ws.send(data);
-            UserMap.forEach(client => {
+            /* UserMap.forEach(client => {
                 if (client.readyState === WebSocket.OPEN) {
                     client.send(ws.user.username)
                 }
-            })
+            }) */
         })
     });
     server.on('upgrade', (request, socket, head) => handleUpgrade(request, socket, head, wss));
     return wss;
 }
 
+const printActiveSocketIds = (SocketUserMap) => {
+    console.log(SocketUserMap.keys())
+}
+
 function sendOffer(payload, ws) {
     // sends an webRTC offer to a target socket if it is in the UserMap
-    const targeSocket = UserMap.get(payload.target);
-    if (targeSocket) {
-        targeSocket.send({
+    console.dir(payload)
+    const targetSocket = UserMap.get(String(payload.target));
+    console.log(targetSocket.user)
+    if (targetSocket) {
+        sendJsonTo(targetSocket, {
             type: 'offer',
-            data: payload
+            payload
         });
-        return ws.send({
+        return sendJsonTo(ws, {
             type: 'sendOffserSucces',
-            data: payload
+            payload
         })
     }
-    ws.send({
+    sendJsonTo(ws, {
         type: 'sendOfferFail',
-        data: payload
+        payload
     })
 }
 
@@ -76,37 +95,42 @@ function answerOffer(payload, ws) {
     // sends the answer to an webRTC offer to a target socket if it is in the UserMap
     // not much is stopping you from calling this the wrong way but a connection will not be formed
     // if there was no previous offer
-    const targeSocket = UserMap.get(payload.target);
-    if (targeSocket) {
-        targeSocket.send({
+    const targetSocket = UserMap.get(String(payload.target));
+    console.log(payload.target)
+    console.log(UserMap.keys())
+    console.log(targetSocket.user)
+    if (targetSocket) {
+        sendJsonTo(targetSocket, {
             type: 'answer',
-            data: payload
+            payload
         });
-        return ws.send({
+        return sendJsonTo(ws, {
             type: 'answerOffserSucces',
-            data: payload
+            payload
         })
     }
-    ws.send({
+    sendJsonTo(ws, {
         type: 'answerOfferFail',
-        data: payload
+        payload
     })
 }
 
 function handleIceCandidate(payload, ws) {
     const targetSocket = UserMap.get(payload.target);
     if (targetSocket) {
-        targetSocket.send({
+        sendJsonTo(targetSocket, {
             type: 'iceCandidate',
-            data: payload
-        });
-        return ws.send({
+            payload
+        })
+        sendJsonTo(ws, {
             type: 'iceSucces',
-            data: payload
+            payload
         })
     }
-    ws.send({
+    sendJsonTo(ws, {
         type: 'iceFail',
-        data: payload
+        payload
     })
 }
+
+const sendJsonTo = (targetSocket, objectData: object) => targetSocket.send(JSON.stringify(objectData))

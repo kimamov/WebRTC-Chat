@@ -1,16 +1,20 @@
-import React, { Component } from 'react'
+import React, { Component, Context as ContextInterface } from 'react'
 import SimplePeer from 'simple-peer'
-import Socket from './components/Socket'
-import { TextField } from '@material-ui/core'
-import { Context } from './state/state';
+import { TextField, Button, Box, Card, Typography } from '@material-ui/core'
+import { Context, Store } from './state/state';
+import { History } from 'history'
+import { initSocket } from './api/socket'
 
-export interface IAppProps { }
+export interface IAppProps {
+  /*  history: History */
+}
 
 export interface IAppState {
   textInput: string
   data: string
   connected: boolean
   targetUserId: string
+  callingUser: any
 }
 
 export interface WebSocketMessage {
@@ -18,40 +22,8 @@ export interface WebSocketMessage {
   data: any
 }
 
-function initSocket(username: string, password: string) {
-  if (!username) return null
-  // todo once client and server run on the same oirigin go back to cookie auth
-  const socket = new WebSocket("ws://127.0.0.1:5000?username=" + username + "&password=" + password);
-
-  socket.onopen = function (e) {
-    console.log("[open] Connection established");
-    console.log("Sending to server");
-    socket.send("hey server");
-  };
-
-  socket.onmessage = function (event) {
-    console.log(`[message] Data received from server: ${event.data}`);
-  };
-
-  socket.onclose = function (event) {
-    if (event.wasClean) {
-      console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
-    } else {
-      // e.g. server process killed or network down
-      // event.code is usually 1006 in this case
-      console.log('[close] Connection died');
-    }
-  };
-
-  socket.onerror = function (error: any) {
-    console.log(`[error] ${error.message}`);
-  };
-
-  return socket;
-}
-
 export default class Chat extends Component<IAppProps, IAppState> {
-  static contextType = Context;
+  static contextType: ContextInterface<Store> = Context;
   peer: any = null
   private socket: WebSocket | null = null;
   constructor(props: IAppProps) {
@@ -60,7 +32,8 @@ export default class Chat extends Component<IAppProps, IAppState> {
       textInput: '',
       data: '',
       connected: false,
-      targetUserId: ''
+      targetUserId: '',
+      callingUser: null
     }
   }
   onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -70,23 +43,47 @@ export default class Chat extends Component<IAppProps, IAppState> {
     >)
 
   componentDidMount() {
-    this.socket = initSocket(this.context?.state?.user?.username, "kantemir");
-    this.createPeer(this.context.state.id, "3");
+    const socket = initSocket(this.context.state.user.username, "kantemir");
+    if (!socket) {
+      //this.props.history.push('/login');
+      return;
+    }
+    this.socket = socket;
+    this.socket.onmessage = this.handleSocketMessage
+  }
+
+  handleSocketMessage = (incomingMessage: any) => {
+    console.log(incomingMessage.data);
+    try {
+      const message = JSON.parse(incomingMessage.data);
+      if (message.type === "offer") {
+        this.setState({
+          callingUser: message.payload
+        })
+      }
+    }
+    catch (e) {
+      console.log(e);
+
+    }
   }
 
   createPeer = (targetUserId: string, userId: string) => {
+    if (!targetUserId || !userId) {
+      console.log("invalid arguments");
+      return;
+    }
     this.peer = new SimplePeer({
       initiator: true,
       trickle: false,
     })
-
     this.peer.on('error', (err: Error) => console.log('error', err))
 
     this.peer.on('signal', (data: any) => {
       console.log('SIGNAL', data)
       this.socket?.send(JSON.stringify({
         type: 'offer',
-        data: {
+        payload: {
           target: targetUserId,
           from: userId,
           data: data
@@ -107,14 +104,33 @@ export default class Chat extends Component<IAppProps, IAppState> {
       this.setState({ data: String(data) })
     })
 
-      (this.socket as WebSocket).onmessage((message: WebSocketMessage) => {
-        if (message.type === "answer") {
-          this.peer.signal(message.data)
+    if (this.socket) {
+      console.log("working")
+      this.socket.onmessage = (incomingMessage: WebSocketMessage) => {
+        console.log("working too")
+        try {
+          const message = JSON.parse(incomingMessage.data);
+          if (message.type === "answer") {
+            console.log(message)
+            this.peer.signal(message.payload.data)
+          }
+        } catch (e) {
+          console.log(e);
         }
-      })
+
+      }
+    }
   }
 
-  addPeer = (userId: string, signal: any) => {
+  createTargetPeer = () => {
+    this.createPeer(this.state.targetUserId, this.context.state.user.id);
+  }
+  acceptPeer = () => {
+    this.addPeer(this.state.callingUser.from, this.context.state.user.id, this.state.callingUser.data);
+  }
+
+  addPeer = (targetUserId: string, userId: string, signal: any) => {
+    console.log(targetUserId, userId);
     const peer = new SimplePeer({
       initiator: false,
       trickle: false,
@@ -126,7 +142,8 @@ export default class Chat extends Component<IAppProps, IAppState> {
       console.log('SIGNAL', data)
       this.socket?.send(JSON.stringify({
         type: 'answer',
-        data: {
+        payload: {
+          target: targetUserId,
           from: userId,
           data: data
         }
@@ -155,13 +172,13 @@ export default class Chat extends Component<IAppProps, IAppState> {
   signalOrMessage = () => {
     if (!this.peer) return
     console.log(this.state.connected)
-    if (this.state.connected) return this.peer.send(this.state.textInput)
-    this.peer.signal(JSON.parse(this.state.textInput))
+    if (this.state.connected || true) return this.peer.send(this.state.textInput)
+    //this.peer.signal(JSON.parse(this.state.textInput))
   }
 
   public render() {
     return (
-      <div>
+      <Box marginTop={4} padding={4}>
         <TextField
           color="primary"
           variant="outlined"
@@ -171,6 +188,27 @@ export default class Chat extends Component<IAppProps, IAppState> {
           value={this.state.targetUserId}
           onChange={this.onChange}
         />
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={this.createTargetPeer}
+        >
+          Connect
+        </Button>
+        {this.state.callingUser &&
+          <Card>
+            <Typography>
+              {this.state.callingUser.from}
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.acceptPeer}
+            >
+              Accept
+            </Button>
+          </Card>
+        }
         <header>
           <p>
             {this.state.connected
@@ -178,7 +216,6 @@ export default class Chat extends Component<IAppProps, IAppState> {
               : 'waiting for connection'}
           </p>
         </header>
-        <button onClick={this.initConnection}>init connection</button>
         {/* <button onClick={this.joinConnection}>join connection</button> */}
         <form onSubmit={this.onSubmit}>
           <textarea
@@ -200,7 +237,7 @@ export default class Chat extends Component<IAppProps, IAppState> {
             <pre>{this.state.data}</pre>
           </>
         )}
-      </div>
+      </Box>
     )
   }
 }
