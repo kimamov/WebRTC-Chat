@@ -17,6 +17,7 @@ export function initSocket(username: string, password: string) {
     };
 
     socket.onclose = function (event) {
+        // pass function to reconnect or redirect user to login
         if (event.wasClean) {
             console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
         } else {

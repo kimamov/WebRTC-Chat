@@ -6,7 +6,7 @@ import { History } from 'history'
 import { initSocket } from './api/socket'
 
 export interface IAppProps {
-  /*  history: History */
+  history: History
 }
 
 export interface IAppState {
@@ -45,7 +45,7 @@ export default class Chat extends Component<IAppProps, IAppState> {
   componentDidMount() {
     const socket = initSocket(this.context.state.user.username, "kantemir");
     if (!socket) {
-      //this.props.history.push('/login');
+      this.props.history.push('/login');
       return;
     }
     this.socket = socket;
