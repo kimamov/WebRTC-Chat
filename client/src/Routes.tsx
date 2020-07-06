@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Box, Typography, Snackbar } from '@material-ui/core'
 import Login from './components/auth/Login'
-import Chat from './Chat'
+import ChatApp from './components/ChatApp'
 import { Switch, Route } from 'react-router-dom'
 import Nav from './components/Nav'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -26,7 +26,7 @@ export default class Routes extends Component<IAppProps, IAppState> {
         <Route path="/welcome">
           <Typography>Welcome :)</Typography>
         </Route>
-        <ProtectedRoute redirectPath="/welcome" component={Chat} />
+        <ProtectedRoute redirectPath="/welcome" component={ChatApp} />
       </Switch>
     )
   }

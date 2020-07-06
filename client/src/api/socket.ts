@@ -1,5 +1,5 @@
 export function initSocket(username: string, password: string) {
-    if (!username) return null
+    if (!username || !password) return null
     // todo once client and server run on the same oirigin go back to cookie auth
     const socket = new WebSocket("ws://127.0.0.1:5000?username=" + username + "&password=" + password);
 
