@@ -1,47 +1,15 @@
-import { Http2Server } from "http2";
-import { User } from "../entity/User";
-const WebSocket = require('ws')
+import {ConnectedSockets} from '../index';
 
-const handleUpgrade = require('./handleUpgrade');
-
-export const UserMap = new Map<string, any>()
-
-interface SocketMessage {
+export interface SocketMessage {
     type: string
     payload: any
 }
-/* TODO
-    -get types for WebSocket ws library does not use typescript but there seem to be third party types
-    -delete socket if user logs out
-*/
-module.exports = function initSocketServer(server: Http2Server) {
-    const wss = new WebSocket.Server({
-        noServer: true,
-    });
-    wss.on('connection', (ws, request, data) => {
-        ws.user = request.user;
-        if (UserMap.has(String(request.user.id))) {
-            // if socket with the same key exists delete it
-            // only for local testing
-            UserMap.delete(String(request.user.id))
-        }
-        UserMap.set(String(request.user.id), ws);
-        /* tell all users that are your friends and online that you are online  */
-        printActiveSocketIds(UserMap);
-        //ws.send(data);
-        ws.on('message', (incomingMessage: any) => {
-            handleSocketMessage(incomingMessage, ws);
-        })
-    });
-    server.on('upgrade', (request, socket, head) => handleUpgrade(request, socket, head, wss));
-    return wss;
-}
 
-const printActiveSocketIds = (SocketUserMap) => {
+export const printActiveSocketIds = (SocketUserMap) => {
     console.log(SocketUserMap.keys())
 }
 
-function handleSocketMessage(message: any, ws: any){
+export function handleSocketMessage(message: any, ws: any){
     // most messages will be strings of stringified json but some will be binary data as blobs / arraybuffers
     if(typeof message==='string') return handleStringMessage(message, ws); 
     handleBinaryMessage(message, ws);
@@ -90,7 +58,7 @@ function handleBinaryMessage(message: any, ws: any){
 function sendOffer(payload, ws) {
     // sends an webRTC offer to a target socket if it is in the UserMap
     console.dir(payload)
-    const targetSocket = UserMap.get(String(payload.target));
+    const targetSocket = ConnectedSockets.get(String(payload.target));
     console.log(targetSocket.user)
     if (targetSocket) {
         sendJsonTo(targetSocket, {
@@ -112,9 +80,9 @@ function answerOffer(payload, ws) {
     // sends the answer to an webRTC offer to a target socket if it is in the UserMap
     // not much is stopping you from calling this the wrong way but a connection will not be formed
     // if there was no previous offer
-    const targetSocket = UserMap.get(String(payload.target));
+    const targetSocket = ConnectedSockets.get(String(payload.target));
     console.log(payload.target)
-    console.log(UserMap.keys())
+    console.log(ConnectedSockets.keys())
     console.log(targetSocket.user)
     if (targetSocket) {
         sendJsonTo(targetSocket, {
@@ -133,7 +101,7 @@ function answerOffer(payload, ws) {
 }
 
 function handleIceCandidate(payload, ws) {
-    const targetSocket = UserMap.get(payload.target);
+    const targetSocket = ConnectedSockets.get(payload.target);
     if (targetSocket) {
         sendJsonTo(targetSocket, {
             type: 'iceCandidate',
@@ -153,3 +121,20 @@ function handleIceCandidate(payload, ws) {
 const sendJsonTo = (targetSocket, objectData: object) => targetSocket.send(JSON.stringify(objectData))
 
 const jsonMessage=(type: string, payload: JSON | string):string=>JSON.stringify({type: type, payload: payload})
+
+
+export const closeWebSocket=(ws: any)=>{
+    //ws.send(jsonMessage('socketClosing', 'closing your socket connection gracefully'))
+    ConnectedSockets.delete(ws);
+    console.log(ConnectedSockets.keys())
+    ws.close();
+}
+
+export const closeWebSocketWithId=(userId: string)=>{
+    // casting to string bullshit will be fixed once i switch id to uuid
+    const id=String(userId);
+    if(!id) return;
+    const socket=ConnectedSockets.get(id)
+    socket.close();
+    ConnectedSockets.delete(id);
+}

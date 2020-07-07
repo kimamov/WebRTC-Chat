@@ -2,6 +2,10 @@ import { createConnection } from "typeorm";
 import { User } from "./entity/User";
 import { sessionParser } from './config'
 
+// replace this with Redis moving forward
+export const ConnectedSockets = new Map<string, any>()
+
+
 createConnection()
   .then(async (connection) => {
     // setup server once connection to the database is created
@@ -10,7 +14,7 @@ createConnection()
     const auth = require("./util/passportStrategies");
     const passport = require("passport");
     const routes = require("./routes/routes");
-    const initSocketServer = require("./socket/socket");
+    const initSocketServer = require("./socket/socketServer");
 
     const PORT = 5000;
 
