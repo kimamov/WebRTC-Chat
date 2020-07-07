@@ -7,6 +7,12 @@ import ContactDrawer from './ContactDrawer';
 import Chat from './Chat'
 import ChatAppPending from './ChatAppPending';
 
+// interface for other users that can be contacted
+export interface BasicUser {
+  id: string
+  username: string
+}
+
 export interface IAppProps {
   history: History
 }
@@ -18,6 +24,7 @@ export interface IAppState {
   targetUserId: string
   callingUser: any
   socketState: string
+  activeUserList: BasicUser[]
 }
 
 export interface WebSocketMessage {
@@ -26,7 +33,10 @@ export interface WebSocketMessage {
 }
 
 export default class ChatApp extends Component<IAppProps, IAppState> {
-  /* component holding all the chats and active states */
+  /* component holding all the chats and active states 
+    todo: move the actual webrtc connection stuff to the chat component
+  */
+  
   static contextType: ContextInterface<Store> = Context;
   peer: any = null
   private socket: WebSocket | null = null;
@@ -38,7 +48,8 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
       connected: false,
       targetUserId: '',
       callingUser: null,
-      socketState: 'STARTING'
+      socketState: 'STARTING',
+      activeUserList: []
     }
   }
   onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -240,6 +251,7 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
     if (this.state.socketState === "OPEN") return (
       <Box display='flex'>
         <ContactDrawer
+          activeUserList={this.state.activeUserList}
         />
         <Chat
           socket={this.socket as WebSocket}

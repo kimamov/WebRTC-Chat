@@ -24,6 +24,7 @@ export interface WebSocketMessage {
 }
 
 export default class Chat extends Component<IAppProps, IAppState> {
+    // actually a single chat with a user. Maybe add another wrapper that holds all the webRTC logic
     peer: any = null
     constructor(props: IAppProps) {
         super(props)
@@ -166,9 +167,7 @@ export default class Chat extends Component<IAppProps, IAppState> {
     public render() {
         return (
             <Box display='flex'>
-                <ContactDrawer
 
-                />
             </Box>
         )
     }

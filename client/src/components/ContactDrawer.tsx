@@ -9,6 +9,11 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+import { Avatar, Typography } from '@material-ui/core';
+
+interface Props {
+    activeUserList: {id: string, username: string}[]
+}
 
 const drawerWidth = 240;
 
@@ -28,7 +33,8 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-export default function ContactDrawer() {
+export default function ContactDrawer({activeUserList}: Props) {
+    // todo switch this to and extendable drawer that overlaps the header
     const classes = useStyles();
 
     return (
@@ -50,14 +56,23 @@ export default function ContactDrawer() {
                     ))}
                 </List>
                 <Divider />
-                <List>
-                    {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                        <ListItem button key={text}>
-                            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                            <ListItemText primary={text} />
-                        </ListItem>
-                    ))}
-                </List>
+                {activeUserList.length?
+                    <List>
+                        {activeUserList.map((activeUser) => (
+                            <ListItem button key={activeUser.id+'_'+Date.now()}>
+                                <ListItemIcon>
+                                    <Avatar/>
+                                </ListItemIcon>
+                                <ListItemText primary={activeUser.username} />
+                            </ListItem>
+                        ))}
+                    </List>
+                    :
+                    <Typography>
+                        Noone online... 
+                    </Typography>
+                }
+                
             </div>
         </Drawer>
     );
