@@ -3,30 +3,22 @@ import { useStateContext } from '../state/state'
 import {
   AppBar,
   Toolbar,
-  Typography,
-  IconButton,
-  Switch,
   withStyles,
   Theme
 } from '@material-ui/core'
-import MenuIcon from '@material-ui/icons/Menu'
 import RouterLink from './RouterLink'
-import NavUserDisplay from './NavUserDisplay'
+import NavUser from './navHeader/NavUser'
+import NavGuest from './navHeader/NavGuest'
+
 
 interface Props { }
 
-const StyledSwitch = withStyles((theme: Theme) => ({
-  root: {
-    //marginLeft: 'auto',
-    marginLeft: theme.spacing(2),
-  },
-}))(Switch)
 
-const StyledLink = withStyles((theme: Theme) => ({
+/* const StyledLink = withStyles((theme: Theme) => ({
   root: {
     marginLeft: theme.spacing(2),
   },
-}))(RouterLink)
+}))(RouterLink) */
 
 const AppBarOnTop = withStyles((theme: Theme) => ({
   // put AppBar above drawer and actually anything else :)
@@ -36,18 +28,18 @@ const AppBarOnTop = withStyles((theme: Theme) => ({
 }))(AppBar)
 
 const Nav = (props: Props) => {
-  const { state, dispatch } = useStateContext()
+  const { state } = useStateContext()
+  const isLoggedIn=state.user && state.user.username;
+
   return (
     <AppBarOnTop position="fixed">
       <Toolbar variant="dense">
-        <IconButton edge="start" color="inherit" aria-label="menu">
-          <MenuIcon />
-        </IconButton>
-        <Typography variant="h6" color="inherit">
-          Chat
-        </Typography>
-        <NavUserDisplay />
-        <StyledSwitch onChange={() => dispatch({ type: 'toggleDark' })} />
+        {/* toggle drawer! only display when logged in */}
+        {isLoggedIn?
+          <NavUser user={state.user}/>
+          :
+          <NavGuest/>  
+        }
       </Toolbar>
     </AppBarOnTop>
   )

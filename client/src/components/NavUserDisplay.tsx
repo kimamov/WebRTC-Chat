@@ -8,7 +8,11 @@ interface Props {}
 
 const StyledRouterLink=styled(RouterLink)(({theme})=>({
       marginLeft: theme.spacing(2)
-  
+}))
+
+const AvatarWithMargin=styled(Avatar)(({theme})=>({
+  marginLeft: theme.spacing(1),
+  /* marginRight: theme.spacing(1) */
 }))
 
 const NavUserDisplay = (props: Props) => {
@@ -18,7 +22,6 @@ const NavUserDisplay = (props: Props) => {
     <Box marginLeft="auto">
       {state.user ? (
         <Box display="flex">
-          <Avatar alt="user avatar" />
           <NavUserMenu />
         </Box>
       ) : (

@@ -8,8 +8,10 @@ import ListItemText from '@material-ui/core/ListItemText'
 import InboxIcon from '@material-ui/icons/MoveToInbox'
 import DraftsIcon from '@material-ui/icons/Drafts'
 import SendIcon from '@material-ui/icons/Send'
+import Typography from '@material-ui/core/Typography'
 import { useStateContext } from '../state/state'
 import { logOut } from '../api/api'
+import { Avatar } from '@material-ui/core'
 
 const StyledMenu = withStyles({
   paper: {
@@ -67,15 +69,13 @@ export default function NavUserMenu() {
 
   return (
     <div>
-      <Button
+      {/* make this an icon button */}
+      <Avatar
         aria-controls="customized-menu"
         aria-haspopup="true"
-        variant="contained"
-        color="primary"
         onClick={handleClick}
       >
-        Open Menu
-      </Button>
+      </Avatar>
       <StyledMenu
         id="customized-menu"
         anchorEl={anchorEl}
