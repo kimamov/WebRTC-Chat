@@ -1,7 +1,5 @@
 import { Http2Server } from "http2";
 import { User } from "../entity/User";
-//import * as WebSocket from 'ws';
-//import { WebSocket } from 'ws'
 const WebSocket = require('ws')
 
 const handleUpgrade = require('./handleUpgrade');
@@ -12,11 +10,13 @@ interface SocketMessage {
     type: string
     payload: any
 }
-
+/* TODO
+    -get types for WebSocket ws library does not use typescript but there seem to be third party types
+    -delete socket if user logs out
+*/
 module.exports = function initSocketServer(server: Http2Server) {
     const wss = new WebSocket.Server({
         noServer: true,
-        /* clientTracking: true */
     });
     wss.on('connection', (ws, request, data) => {
         ws.user = request.user;
@@ -29,37 +29,8 @@ module.exports = function initSocketServer(server: Http2Server) {
         /* tell all users that are your friends and online that you are online  */
         printActiveSocketIds(UserMap);
         //ws.send(data);
-        ws.on('message', (incomingMessage: string) => {
-            ws.send(JSON.stringify({ message: "you passed" }));
-            try {
-                const message = JSON.parse(incomingMessage);
-                switch (message.type) {
-                    case 'offer':
-                        sendOffer(message.payload, ws);
-                        break;
-                    case 'answer':
-                        answerOffer(message.payload, ws);
-                        break;
-                    case 'iceCandidate':
-                        handleIceCandidate(message.payload, ws);
-                        break;
-                    default:
-                        sendJsonTo(ws, {
-                            type: 'message',
-                            data: 'server is listening but this is no valid message type :)'
-                        })
-
-                }
-            } catch (e) {
-                console.log(e);
-                console.log("failed to parse json");
-                return;
-            }
-            /* UserMap.forEach(client => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(ws.user.username)
-                }
-            }) */
+        ws.on('message', (incomingMessage: any) => {
+            handleSocketMessage(incomingMessage, ws);
         })
     });
     server.on('upgrade', (request, socket, head) => handleUpgrade(request, socket, head, wss));
@@ -69,6 +40,52 @@ module.exports = function initSocketServer(server: Http2Server) {
 const printActiveSocketIds = (SocketUserMap) => {
     console.log(SocketUserMap.keys())
 }
+
+function handleSocketMessage(message: any, ws: any){
+    // most messages will be strings of stringified json but some will be binary data as blobs / arraybuffers
+    if(typeof message==='string') return handleStringMessage(message, ws); 
+    handleBinaryMessage(message, ws);
+}
+
+function handleStringMessage(message: string, ws: any){
+    try {
+        // if the string is valid json pass it down to the json handler
+        const json=JSON.parse(message);
+        handleJsonMessage(json, ws)
+    } catch (error) {
+        // otherwise it is just a string lets handle it as such (actually not much I do with strings lets just send them back as test)
+        console.log(error);
+        console.log(message);
+        ws.send(message);
+    }
+}
+
+function handleJsonMessage(json: SocketMessage, ws){
+    // actually use the json to handle different message types
+    switch (json.type) {
+        case 'offer':
+            sendOffer(json.payload, ws);
+            break;
+        case 'answer':
+            answerOffer(json.payload, ws);
+            break;
+        case 'iceCandidate':
+            handleIceCandidate(json.payload, ws);
+            break;
+        default:
+            sendJsonTo(ws, {
+                type: 'message',
+                payload: 'server is listening but this is no valid message type :)'
+            })
+    }
+}
+
+function handleBinaryMessage(message: any, ws: any){
+    // not handeling any binary for now
+    ws.send(jsonMessage('notSupported', 'binary data is currently not supported.... please try sending strings or stringified JSON objects'));
+}
+
+
 
 function sendOffer(payload, ws) {
     // sends an webRTC offer to a target socket if it is in the UserMap
@@ -134,3 +151,5 @@ function handleIceCandidate(payload, ws) {
 }
 
 const sendJsonTo = (targetSocket, objectData: object) => targetSocket.send(JSON.stringify(objectData))
+
+const jsonMessage=(type: string, payload: JSON | string):string=>JSON.stringify({type: type, payload: payload})
