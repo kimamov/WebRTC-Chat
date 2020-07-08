@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Box, Typography, Snackbar } from '@material-ui/core'
 import Login from './components/auth/Login'
-import ChatApp from './components/ChatApp'
+import ChatApp from './components/chat/ChatApp'
 import { Switch, Route } from 'react-router-dom'
 import Nav from './components/Nav'
 import ProtectedRoute from './components/ProtectedRoute'

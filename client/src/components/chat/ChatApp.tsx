@@ -1,17 +1,14 @@
 import React, { Component, Context as ContextInterface } from 'react'
 import SimplePeer from 'simple-peer'
 import { Box } from '@material-ui/core'
-import { Context, Store } from '../state/state';
+import { Context, Store } from '../../state/state';
 import { History } from 'history'
-import ContactDrawer from './ContactDrawer';
+import ChatAppDrawer from './ChatAppDrawer';
 import Chat from './Chat'
-import ChatAppPending from './ChatAppPending';
+import ChatAppPending from './../ChatAppPending';
+import {BasicUser} from '../../types/types'
 
-// interface for other users that can be contacted
-export interface BasicUser {
-  id: string
-  username: string
-}
+
 
 export interface IAppProps {
   history: History
@@ -24,7 +21,7 @@ export interface IAppState {
   targetUserId: string
   callingUser: any
   socketState: string
-  activeUserList: BasicUser[]
+  friendList: BasicUser[]
 }
 
 export interface WebSocketMessage {
@@ -49,7 +46,7 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
       targetUserId: '',
       callingUser: null,
       socketState: 'STARTING',
-      activeUserList: []
+      friendList: []
     }
   }
   onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -250,9 +247,7 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
   public render() {
     if (this.state.socketState === "OPEN") return (
       <Box display='flex'>
-        <ContactDrawer
-          activeUserList={this.state.activeUserList}
-        />
+        <ChatAppDrawer/>
         <Chat
           socket={this.socket as WebSocket}
         />

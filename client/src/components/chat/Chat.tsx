@@ -1,10 +1,9 @@
 import React, { Component, Context as ContextInterface } from 'react'
 import SimplePeer from 'simple-peer'
 import { TextField, Button, Box, Card, Typography } from '@material-ui/core'
-import { Context, Store } from '../state/state';
+import { Context, Store } from '../../state/state';
 import { History } from 'history'
-import { initSocket } from '../api/socket'
-import ContactDrawer from './ContactDrawer';
+import { initSocket } from '../../api/socket'
 
 export interface IAppProps {
     socket: WebSocket

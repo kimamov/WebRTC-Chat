@@ -9,11 +9,9 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
-import { Avatar, Typography } from '@material-ui/core';
+import ContactList from './ContactList';
 
-interface Props {
-    activeUserList: {id: string, username: string}[]
-}
+
 
 const drawerWidth = 240;
 
@@ -33,7 +31,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-export default function ContactDrawer({activeUserList}: Props) {
+export default function ChatAppDrawer() {
     // todo switch this to and extendable drawer that overlaps the header
     const classes = useStyles();
 
@@ -56,23 +54,7 @@ export default function ContactDrawer({activeUserList}: Props) {
                     ))}
                 </List>
                 <Divider />
-                {activeUserList.length?
-                    <List>
-                        {activeUserList.map((activeUser) => (
-                            <ListItem button key={activeUser.id+'_'+Date.now()}>
-                                <ListItemIcon>
-                                    <Avatar/>
-                                </ListItemIcon>
-                                <ListItemText primary={activeUser.username} />
-                            </ListItem>
-                        ))}
-                    </List>
-                    :
-                    <Typography>
-                        Noone online... 
-                    </Typography>
-                }
-                
+                <ContactList/>
             </div>
         </Drawer>
     );
