@@ -7,6 +7,7 @@ import ChatAppDrawer from './ChatAppDrawer';
 import Chat from './Chat'
 import ChatAppPending from './../ChatAppPending';
 import { BasicUser, WebSocketMessage } from '../../types/types'
+import { jsonMessage } from '../../api/socket';
 
 
 
@@ -76,30 +77,30 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
     socket.onopen = (event) => {
       console.log("[open] Connection established");
       console.log("Sending to server");
-      socket.send(JSON.stringify({
-        type: 'message',
-        data: 'hey'
-      }));
+      socket.send(jsonMessage('message', 'hey'));
       this.setState({
         socketState: 'OPEN'
       })
     };
 
-    socket.onmessage = (incomingMessage: any) => {
+    socket.onmessage = (incomingMessage: MessageEvent) => {
       // add call / offer event to the socket. 
       // Could do that inside initSocket but cba adding callbacks and promises are even more code :<
       console.log(incomingMessage);
-      try {
-        const message = JSON.parse(incomingMessage.data);
-        if (message.type === "offer") {
-          this.setState({
-            callingUser: message.payload
-          })
+      if (typeof incomingMessage.data === 'string') {
+        try {
+          const message = JSON.parse(incomingMessage.data);
+          if (message.type === "offer") {
+            this.setState({
+              callingUser: message.payload
+            })
+          }
+        }
+        catch (e) {
+          console.log(e);
         }
       }
-      catch (e) {
-        console.log(e);
-      }
+
     };
 
 
@@ -145,14 +146,12 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
 
     this.peer.on('signal', (data: any) => {
       console.log('SIGNAL', data)
-      this.socket?.send(JSON.stringify({
-        type: 'offer',
-        payload: {
+      this.socket?.send(jsonMessage('offer',
+        {
           target: targetUserId,
           from: userId,
           data: data
-        }
-      }))
+        }))
       this.setState({ data: JSON.stringify(data, null, 2) })
     })
 
@@ -169,19 +168,18 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
     })
 
     if (this.socket) {
-      console.log("working")
-      this.socket.onmessage = (incomingMessage: WebSocketMessage) => {
-        console.log("working too")
-        try {
-          const message = JSON.parse(incomingMessage.data);
-          if (message.type === "answer") {
-            console.log(message)
-            this.peer.signal(message.payload.data)
+      this.socket.onmessage = (incomingMessage: MessageEvent) => {
+        if (typeof incomingMessage.data === 'string') {
+          try {
+            const message = JSON.parse(incomingMessage.data);
+            if (message.type === "answer") {
+              console.log(message)
+              this.peer.signal(message.payload.data)
+            }
+          } catch (e) {
+            console.log(e);
           }
-        } catch (e) {
-          console.log(e);
         }
-
       }
     }
   }
@@ -204,14 +202,13 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
 
     peer.on('signal', (data: any) => {
       console.log('SIGNAL', data)
-      this.socket?.send(JSON.stringify({
-        type: 'answer',
-        payload: {
+      this.socket?.send(jsonMessage('answer',
+        {
           target: targetUserId,
           from: userId,
           data: data
         }
-      }))
+      ))
       this.setState({ data: JSON.stringify(data, null, 2) })
     })
 

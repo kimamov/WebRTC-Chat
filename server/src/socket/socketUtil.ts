@@ -1,4 +1,4 @@
-import {ConnectedSockets} from '../index';
+import { ConnectedSockets } from '../index';
 
 export interface SocketMessage {
     type: string
@@ -9,16 +9,16 @@ export const printActiveSocketIds = (SocketUserMap) => {
     console.log(SocketUserMap.keys())
 }
 
-export function handleSocketMessage(message: any, ws: any){
+export function handleSocketMessage(message: any, ws: any) {
     // most messages will be strings of stringified json but some will be binary data as blobs / arraybuffers
-    if(typeof message==='string') return handleStringMessage(message, ws); 
+    if (typeof message === 'string') return handleStringMessage(message, ws);
     handleBinaryMessage(message, ws);
 }
 
-function handleStringMessage(message: string, ws: any){
+function handleStringMessage(message: string, ws: any) {
     try {
         // if the string is valid json pass it down to the json handler
-        const json=JSON.parse(message);
+        const json = JSON.parse(message);
         handleJsonMessage(json, ws)
     } catch (error) {
         // otherwise it is just a string lets handle it as such (actually not much I do with strings lets just send them back as test)
@@ -28,7 +28,7 @@ function handleStringMessage(message: string, ws: any){
     }
 }
 
-function handleJsonMessage(json: SocketMessage, ws){
+function handleJsonMessage(json: SocketMessage, ws) {
     // actually use the json to handle different message types
     switch (json.type) {
         case 'offer':
@@ -40,6 +40,8 @@ function handleJsonMessage(json: SocketMessage, ws){
         case 'iceCandidate':
             handleIceCandidate(json.payload, ws);
             break;
+        case 'getUsers':
+            getUsers(json.payload, ws);
         default:
             sendJsonTo(ws, {
                 type: 'message',
@@ -48,7 +50,7 @@ function handleJsonMessage(json: SocketMessage, ws){
     }
 }
 
-function handleBinaryMessage(message: any, ws: any){
+function handleBinaryMessage(message: any, ws: any) {
     // not handeling any binary for now
     ws.send(jsonMessage('notSupported', 'binary data is currently not supported.... please try sending strings or stringified JSON objects'));
 }
@@ -118,23 +120,31 @@ function handleIceCandidate(payload, ws) {
     })
 }
 
+const getUsers = async (payload, ws) => {
+    const allActiveUsers = []
+    ConnectedSockets.forEach(socket => {
+        if (socket.user) allActiveUsers.push(socket.user);
+    })
+    ws.send(jsonMessage('returnUsers', allActiveUsers))
+}
+
 const sendJsonTo = (targetSocket, objectData: object) => targetSocket.send(JSON.stringify(objectData))
 
-const jsonMessage=(type: string, payload: JSON | string):string=>JSON.stringify({type: type, payload: payload})
+const jsonMessage = (type: string, payload: any): string => JSON.stringify({ type: type, payload: payload })
 
 
-export const closeWebSocket=(ws: any)=>{
+export const closeWebSocket = (ws: any) => {
     //ws.send(jsonMessage('socketClosing', 'closing your socket connection gracefully'))
     ConnectedSockets.delete(ws);
     console.log(ConnectedSockets.keys())
     ws.close();
 }
 
-export const closeWebSocketWithId=(userId: string)=>{
+export const closeWebSocketWithId = (userId: string) => {
     // casting to string bullshit will be fixed once i switch id to uuid
-    const id=String(userId);
-    if(!id) return;
-    const socket=ConnectedSockets.get(id)
+    const id = String(userId);
+    if (!id) return;
+    const socket = ConnectedSockets.get(id)
     socket.close();
     ConnectedSockets.delete(id);
 }

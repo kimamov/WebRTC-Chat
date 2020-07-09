@@ -1,6 +1,8 @@
 import React, { useContext, useReducer, ReactElement, useEffect } from 'react'
 import { reducer, Action } from './reducer'
 import { Notification } from '../types/types'
+import { getUser } from '../api/api'
+
 export interface StateContext {
   isAuthenticated: boolean
   user: any
@@ -39,10 +41,33 @@ export const StateProvider: React.FC<{ children: ReactElement }> = ({
   const [state, dispatch] = useReducer(reducer, persistentState('chatState', defaultState))
   useEffect(() => {
     window.addEventListener('beforeunload', () => {
-      alert("hey")
       localStorage.setItem('chatState', JSON.stringify(state))
     })
 
   }, [state])
+  useEffect(() => {
+    if (true/* state.user && state.user.id */) {
+      // get fresh user data on mount if we have a "valid" user object
+      (async function refreshUserData() {
+        try {
+          const response = await getUser();
+          const data = await response.json();
+          console.log(data)
+          dispatch({
+            type: 'logIn',
+            payload: data
+          })
+        } catch (error) {
+          console.log(error)
+          dispatch({
+            type: 'logOut'
+          })
+        }
+
+      })()
+    }
+
+  }, [])
+
   return <Context.Provider value={{ state, dispatch }} children={children} />
 }

@@ -1,9 +1,9 @@
 const router = require("express").Router();
 const passport = require("passport");
 import { createUser } from "../controllers/userController";
-//import { checkAuth} from '../middlewares/middlewares';
-import {ConnectedSockets} from '../index';
-import {closeWebSocketWithId} from '../socket/socketUtil'
+import { checkAuth } from '../middlewares/middlewares';
+import { ConnectedSockets } from '../index';
+import { closeWebSocketWithId } from '../socket/socketUtil'
 
 router.post(
   "/login",
@@ -21,21 +21,21 @@ router.post(
 );
 
 router.get("/logout", (req, res) => {
-  const user=req.user;
+  const user = req.user;
   req.logout();
   req.session.destroy();
-  if(user && user.id){
+  if (user && user.id) {
     console.log(ConnectedSockets.keys());
     closeWebSocketWithId(user.id);
     console.log(ConnectedSockets.keys());
   }
-  
+
   res.send("successfully logged out");
 });
 
 router.get("/testuser", (req, res) => {
   console.dir(req.session)
-  req.session.testData="hello world"
+  req.session.testData = "hello world"
   res.send("got user");
 });
 
@@ -54,8 +54,12 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-router.get("/testpage",(req, res)=>{
+router.get("/testpage", (req, res) => {
   res.render('index');
+})
+
+router.get("/user", checkAuth, (req, res) => {
+  res.send(req.user)
 })
 
 

@@ -33,3 +33,6 @@ export function initSocket(username: string, password: string) {
 
     return socket;
 }
+
+
+export const jsonMessage = (type: string, payload: any): string => JSON.stringify({ type: type, payload: payload }) 

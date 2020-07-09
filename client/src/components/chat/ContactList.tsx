@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Typography, List, ListItem, ListItemAvatar, ListItemText, Avatar } from '@material-ui/core'
 import useFetch from '../hooks/useFetch'
 import { BasicUser, WebSocketMessage } from '../../types/types'
+import { jsonMessage } from '../../api/socket'
 
 //const [friendList, loading, error] = useFetch<BasicUser[]>('http://localhost:5000/api/activefriends')
 
@@ -17,15 +18,18 @@ const ContactList: React.FC<Props> = ({ ws }) => {
     const [friendList, setList] = useState<BasicUser[]>([]);
 
     useEffect(() => {
-        function messageHandler(incomingMessage: any) {
+        function messageHandler(incomingMessage: MessageEvent) {
             if (typeof incomingMessage.data === 'string') {
                 try {
                     const message: WebSocketMessage = JSON.parse(incomingMessage.data);
                     if (message.type === 'returnUsers') {
-                        if (Array.isArray(message.data)) {
-                            return setList(message.data);
+                        console.log(message.payload)
+
+                        if (Array.isArray(message.payload)) {
+                            setLoading(false);
+
+                            return setList(message.payload);
                         }
-                        setLoading(false);
                         throw new TypeError('received invalid data')
                     }
                 } catch (error) {
@@ -45,12 +49,7 @@ const ContactList: React.FC<Props> = ({ ws }) => {
 
     const getActiveUsers = () => {
         setLoading(true);
-        ws.send(JSON.stringify({
-            type: 'getUsers',
-            data: { // tell the WebSocket server to get active state for the friends of user with userId
-                userId: '2'
-            }
-        }))
+        ws.send(jsonMessage('getUsers', { useId: 2 }))
     }
 
     if (error) return <Typography>error</Typography>
