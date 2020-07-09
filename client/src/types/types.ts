@@ -10,3 +10,8 @@ export interface BasicUser {
   username: string
   online: boolean
 }
+
+export interface WebSocketMessage {
+  type: string,
+  data: any
+}

@@ -11,7 +11,9 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import ContactList from './ContactList';
 
-
+interface Props {
+    ws: WebSocket
+}
 
 const drawerWidth = 240;
 
@@ -31,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-export default function ChatAppDrawer() {
+export default function ChatAppDrawer({ ws }: Props) {
     // todo switch this to and extendable drawer that overlaps the header
     const classes = useStyles();
 
@@ -54,7 +56,7 @@ export default function ChatAppDrawer() {
                     ))}
                 </List>
                 <Divider />
-                <ContactList/>
+                <ContactList ws={ws} />
             </div>
         </Drawer>
     );

@@ -6,7 +6,7 @@ import { History } from 'history'
 import ChatAppDrawer from './ChatAppDrawer';
 import Chat from './Chat'
 import ChatAppPending from './../ChatAppPending';
-import {BasicUser} from '../../types/types'
+import { BasicUser, WebSocketMessage } from '../../types/types'
 
 
 
@@ -24,16 +24,12 @@ export interface IAppState {
   friendList: BasicUser[]
 }
 
-export interface WebSocketMessage {
-  type: string,
-  data: any
-}
 
 export default class ChatApp extends Component<IAppProps, IAppState> {
   /* component holding all the chats and active states 
     todo: move the actual webrtc connection stuff to the chat component
   */
-  
+
   static contextType: ContextInterface<Store> = Context;
   peer: any = null
   private socket: WebSocket | null = null;
@@ -92,7 +88,7 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
     socket.onmessage = (incomingMessage: any) => {
       // add call / offer event to the socket. 
       // Could do that inside initSocket but cba adding callbacks and promises are even more code :<
-      console.log(incomingMessage.data);
+      console.log(incomingMessage);
       try {
         const message = JSON.parse(incomingMessage.data);
         if (message.type === "offer") {
@@ -243,11 +239,11 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
     if (this.state.connected || true) return this.peer.send(this.state.textInput)
     //this.peer.signal(JSON.parse(this.state.textInput))
   }
-
+  // maybe create a socket context
   public render() {
-    if (this.state.socketState === "OPEN") return (
+    if (this.socket && this.state.socketState === "OPEN") return (
       <Box display='flex'>
-        <ChatAppDrawer/>
+        <ChatAppDrawer ws={this.socket} />
         <Chat
           socket={this.socket as WebSocket}
         />
