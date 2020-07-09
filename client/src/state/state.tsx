@@ -35,11 +35,15 @@ const persistentState = (storageKey: string, defaultState: StateContext): StateC
   return defaultState // otherwise return the normal default state
 }
 
+// component slowy does way more then the name implies
+// dont really feel like creating another wrapper or consuming context inside app tho :<
 export const StateProvider: React.FC<{ children: ReactElement }> = ({
   children,
 }) => {
   const [state, dispatch] = useReducer(reducer, persistentState('chatState', defaultState))
+
   useEffect(() => {
+    // before closing persist the current state in local storage
     window.addEventListener('beforeunload', () => {
       localStorage.setItem('chatState', JSON.stringify(state))
     })
@@ -51,13 +55,15 @@ export const StateProvider: React.FC<{ children: ReactElement }> = ({
       (async function refreshUserData() {
         try {
           const response = await getUser();
-          const data = await response.json();
-          console.log(data)
+          const user = await response.json();
+          // if our session still exists update the user state with fresh data
           dispatch({
             type: 'logIn',
-            payload: data
+            payload: user
           })
         } catch (error) {
+          // if client had an user object but could not get a fresh object back from server
+          // our session is dead and its time to delete the user here too :)
           console.log(error)
           dispatch({
             type: 'logOut'
