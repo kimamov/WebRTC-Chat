@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Typography, List, ListItem, ListItemAvatar, ListItemText, Avatar } from '@material-ui/core'
-import useFetch from '../hooks/useFetch'
 import { BasicUser, WebSocketMessage } from '../../types/types'
 import { jsonMessage } from '../../api/socket'
+import { Link } from 'react-router-dom'
 
 //const [friendList, loading, error] = useFetch<BasicUser[]>('http://localhost:5000/api/activefriends')
 
@@ -27,7 +27,6 @@ const ContactList: React.FC<Props> = ({ ws }) => {
 
                         if (Array.isArray(message.payload)) {
                             setLoading(false);
-
                             return setList(message.payload);
                         }
                         throw new TypeError('received invalid data')
@@ -57,12 +56,15 @@ const ContactList: React.FC<Props> = ({ ws }) => {
     if (friendList && friendList.length) return (
         <List>
             {friendList.map((friend) => (
-                <ListItem button key={friend.id + '_' + Date.now()}>
-                    <ListItemAvatar>
-                        <Avatar></Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary={friend.username} />
-                </ListItem>
+                <Link to={`/chat/${friend.id}`}>
+                    <ListItem button key={friend.id + '_' + Date.now()}>
+                        <ListItemAvatar>
+                            <Avatar></Avatar>
+                        </ListItemAvatar>
+                        <ListItemText primary={friend.username} />
+                    </ListItem>
+                </Link>
+
             ))}
         </List>
     )

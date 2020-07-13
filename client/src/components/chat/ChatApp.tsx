@@ -8,6 +8,7 @@ import Chat from './Chat'
 import ChatAppPending from './../ChatAppPending';
 import { BasicUser, WebSocketMessage } from '../../types/types'
 import { jsonMessage } from '../../api/socket';
+import { Route } from 'react-router-dom';
 
 
 
@@ -223,7 +224,6 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
   }
 
   initConnection = () => this.createPeer(this.context.user.id, this.state.targetUserId)
-  /*  joinConnection = () => this.createPeer(false) */
 
   onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -241,9 +241,15 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
     if (this.socket && this.state.socketState === "OPEN") return (
       <Box display='flex'>
         <ChatAppDrawer ws={this.socket} />
-        <Chat
-          socket={this.socket as WebSocket}
+        <Route path="/chat/:id"
+          render={(props) =>
+            <Chat
+              socket={this.socket as WebSocket}
+              {...props}
+            />
+          }
         />
+
       </Box>
     )
     // for any other case than socket==="OPEN" do error, loading and reconnect handeling
