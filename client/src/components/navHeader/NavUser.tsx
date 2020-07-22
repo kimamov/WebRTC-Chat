@@ -22,7 +22,8 @@ const StyledSwitch = withStyles((theme: Theme) => ({
   }))(Switch)
 
 const NavUser = ({user}: Props) => {
-    const { dispatch } = useStateContext()
+  // todo make switch stateful
+    const { dispatch, state } = useStateContext()
     const handleLogOut=async()=>{
         // move to the sidebar later
         try{
@@ -42,7 +43,7 @@ const NavUser = ({user}: Props) => {
             <Typography variant="h6" color="inherit">
                 {user.username || "chat"}
             </Typography>
-            <StyledSwitch onChange={() => dispatch({ type: 'toggleDark' })} />  
+            <StyledSwitch onChange={() => dispatch({ type: 'toggleDark' })} value={state.darkMode}/>  
         </>
     )
 }

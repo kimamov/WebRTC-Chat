@@ -40,10 +40,20 @@ export default class Chat extends Component<IAppProps, IAppState> {
         const { id } = this.props.match.params;
         console.log(id)
         return (
-            <Box flex={1} marginTop={6}>
-                <Typography>
-                    {id}
-                </Typography>
+            <Box flex={1} display='flex' paddingLeft={1} paddingTop={6} flexDirection='column' minHeight='100vh'>
+                <Card> {/* chat header */}
+                    <Typography variant='h6'>
+                        Chat with {id}
+                    </Typography>
+                </Card>
+                <Box style={{backgroundColor: 'red'}} flex={1}> {/* chat messages */}
+                    test
+                </Box>
+                <Box marginTop='auto'> {/* chat input */}
+                    <Typography>
+                        suc
+                    </Typography>
+                </Box>
             </Box>
         )
     }
