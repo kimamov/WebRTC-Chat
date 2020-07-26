@@ -4,6 +4,7 @@ import { TextField, Button, Box, Card, Typography } from '@material-ui/core'
 import { Context, Store } from '../../state/state';
 import { initSocket } from '../../api/socket'
 import { RouteComponentProps, match } from 'react-router-dom'
+import ChatHeader from './ChatHeader';
 
 export interface MatchParams {
     id: string
@@ -40,12 +41,8 @@ export default class Chat extends Component<IAppProps, IAppState> {
         const { id } = this.props.match.params;
         console.log(id)
         return (
-            <Box flex={1} display='flex' paddingLeft={1} paddingTop={6} flexDirection='column' minHeight='100vh'>
-                <Card> {/* chat header */}
-                    <Typography variant='h6'>
-                        Chat with {id}
-                    </Typography>
-                </Card>
+            <Box flex={1} display='flex' paddingTop={6} flexDirection='column' minHeight='100vh'>
+                <ChatHeader id={id}/>
                 <Box style={{backgroundColor: 'red'}} flex={1}> {/* chat messages */}
                     test
                 </Box>
