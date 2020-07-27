@@ -5,6 +5,7 @@ import { Context, Store } from '../../state/state';
 import { initSocket } from '../../api/socket'
 import { RouteComponentProps, match } from 'react-router-dom'
 import ChatHeader from './ChatHeader';
+import ChatMessageList from './ChatMessageList';
 
 export interface MatchParams {
     id: string
@@ -17,7 +18,8 @@ export interface IAppProps extends RouteComponentProps<MatchParams> {
 
 
 export interface IAppState {
-    textInput: string
+    textInput: string,
+    messages: string[]
 
 }
 
@@ -27,7 +29,7 @@ export default class Chat extends Component<IAppProps, IAppState> {
         super(props)
         this.state = {
             textInput: '',
-
+            messages: []
         }
     }
     onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -43,9 +45,7 @@ export default class Chat extends Component<IAppProps, IAppState> {
         return (
             <Box flex={1} display='flex' paddingTop={6} flexDirection='column' minHeight='100vh'>
                 <ChatHeader id={id}/>
-                <Box style={{backgroundColor: 'red'}} flex={1}> {/* chat messages */}
-                    test
-                </Box>
+                <ChatMessageList messages={this.state.messages}/>
                 <Box marginTop='auto'> {/* chat input */}
                     <Typography>
                         suc
