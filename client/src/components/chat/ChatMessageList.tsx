@@ -1,15 +1,15 @@
 import React from 'react'
 import { Box } from '@material-ui/core'
-import { MessageSharp } from '@material-ui/icons'
 import ChatMessage from './ChatMessage'
+import { Message } from './Chat'
 
 interface Props {
-    messages: string[]
+    messages: Message[]
 }
 
 const ChatMessageList = ({messages=[]}: Props) => {
     return (
-        <Box flex={1} flexDirection='column' display='flex'> {/* chat messages */}
+        <Box flex={1} flexDirection='column' display='flex' maxWidth='40rem'> {/* chat messages */}
             {messages.map(message=><ChatMessage message={message}/>)}
         </Box>
     )

@@ -1,23 +1,55 @@
 import React from 'react'
-import { Card, styled, Theme } from '@material-ui/core'
+import { Card, withStyles, Theme } from '@material-ui/core'
+import { Message } from './Chat'
 
 interface Props {
-    message: string
+    message: Message
 }
 
-const MessageCard=styled(Card)({
-    padding: '0.2rem 1rem',
-    marginTop: '1rem',
-    marginRight: 'auto',
-    marginLeft: '1rem',
-    display: 'inline-block'
-})
+const MessageCard=withStyles((theme: Theme)=>({
+    root: {
+        padding: '0.2rem 1rem',
+        marginTop: theme.spacing(1),
+        marginRight: 'auto',
+        marginLeft: theme.spacing(1),
+        display: 'inline-block'
+    }
+}))(Card)
+
+
+const OwnMessage=withStyles((theme: Theme)=>({
+    root: {
+        
+        marginRight: theme.spacing(1),
+        marginLeft: 'auto',
+        backgroundColor: 'blue',
+        
+    }
+}))(MessageCard)
+
+
+const ForeignMessage=withStyles((theme: Theme)=>({
+    root: {
+        marginRight: 'auto',
+        marginLeft: theme.spacing(1),    
+    }
+}))(MessageCard)
+
+
+const isOwnMessage=(message: Message)=>message.from === 'kantemir'
+
+//const setMessagePosition=(message: Message)=>isOwnMessage(message)? {marginRight: '1rem', marginLeft: 'auto'} : {marginRight: 'auto', marginLeft: '1rem'}
 
 const ChatMessage = ({message}: Props) => {
+    if(isOwnMessage(message)) return (
+        <OwnMessage>
+            {message.data}
+        </OwnMessage>
+    )
     return (
-        <MessageCard>
-            {message}
-        </MessageCard>
+        <ForeignMessage>
+            {message.data}
+        </ForeignMessage>
     )
 }
 

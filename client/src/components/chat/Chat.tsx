@@ -18,9 +18,15 @@ export interface IAppProps extends RouteComponentProps<MatchParams> {
 
 
 export interface IAppState {
-    textInput: string,
-    messages: string[]
+    textInput: string
+    messages: Message[]
+}
 
+export interface Message {
+    from: string
+    to: string
+    own?: boolean
+    data: string
 }
 
 
@@ -29,7 +35,14 @@ export default class Chat extends Component<IAppProps, IAppState> {
         super(props)
         this.state = {
             textInput: '',
-            messages: ['hello world', 'new message', 'test', 'ayyy']
+            messages: [
+                {from: 'kantemir', to: '1', own: true, data: 'hello world'},
+                {from: 'kantem', to: '1', own: false, data: 'hello world'},
+                {from: 'kantemir', to: '1', own: true, data: 'hello world'},
+                {from: 'kant', to: '1', own: false, data: 'hello world'},
+                {from: 'kan', to: '1', own: false, data: 'hello world'},
+                {from: 'kantemir', to: '1', own: true, data: 'hello world'},
+            ]
         }
     }
     onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
