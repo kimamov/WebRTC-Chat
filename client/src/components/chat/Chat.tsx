@@ -29,7 +29,7 @@ export default class Chat extends Component<IAppProps, IAppState> {
         super(props)
         this.state = {
             textInput: '',
-            messages: []
+            messages: ['hello world', 'new message', 'test', 'ayyy']
         }
     }
     onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>

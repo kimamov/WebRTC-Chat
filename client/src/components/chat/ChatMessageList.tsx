@@ -9,7 +9,7 @@ interface Props {
 
 const ChatMessageList = ({messages=[]}: Props) => {
     return (
-        <Box style={{backgroundColor: 'red'}} flex={1}> {/* chat messages */}
+        <Box flex={1} flexDirection='column' display='flex'> {/* chat messages */}
             {messages.map(message=><ChatMessage message={message}/>)}
         </Box>
     )
