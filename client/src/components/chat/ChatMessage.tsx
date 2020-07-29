@@ -22,7 +22,7 @@ const OwnMessage=withStyles((theme: Theme)=>({
         
         marginRight: theme.spacing(1),
         marginLeft: 'auto',
-        backgroundColor: 'blue',
+        backgroundColor: theme.palette.primary.light,
         
     }
 }))(MessageCard)

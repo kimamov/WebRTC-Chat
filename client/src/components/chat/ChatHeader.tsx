@@ -10,7 +10,10 @@ interface Props {
 const FlexCard=withStyles((theme: Theme)=>({
     root: {
         display: 'flex',
-        padding: '0 1rem',
+        paddingTop:  theme.spacing(1),
+        paddingBottom:  theme.spacing(1),
+        paddingRight:  theme.spacing(2),
+        paddingLeft:  theme.spacing(2),
         alignItems: 'center',
         '& *:nth-child(n+2)': {
             marginLeft: '2rem'

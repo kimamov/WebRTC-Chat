@@ -6,6 +6,7 @@ import { initSocket } from '../../api/socket'
 import { RouteComponentProps, match } from 'react-router-dom'
 import ChatHeader from './ChatHeader';
 import ChatMessageList from './ChatMessageList';
+import ChatInput from './ChatInput';
 
 export interface MatchParams {
     id: string
@@ -50,7 +51,9 @@ export default class Chat extends Component<IAppProps, IAppState> {
             IAppState,
             keyof IAppState
         >)
-
+    sendMessage=(message: string)=>{
+        alert(message)
+    }
 
     public render() {
         const { id } = this.props.match.params;
@@ -59,11 +62,7 @@ export default class Chat extends Component<IAppProps, IAppState> {
             <Box flex={1} display='flex' paddingTop={6} flexDirection='column' minHeight='100vh'>
                 <ChatHeader id={id}/>
                 <ChatMessageList messages={this.state.messages}/>
-                <Box marginTop='auto'> {/* chat input */}
-                    <Typography>
-                        suc
-                    </Typography>
-                </Box>
+                <ChatInput sendMessage={this.sendMessage}/>
             </Box>
         )
     }
