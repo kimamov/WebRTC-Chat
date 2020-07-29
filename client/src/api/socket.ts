@@ -34,5 +34,7 @@ export function initSocket(username: string, password: string) {
     return socket;
 }
 
+type JsonMessageTypes= 'offer' | 'answer' | 'iceCandidate' | 'getUsers' | 'directMessage' | 'message'
 
-export const jsonMessage = (type: string, payload: any): string => JSON.stringify({ type: type, payload: payload }) 
+
+export const jsonMessage = (type: JsonMessageTypes, payload: any): string => JSON.stringify({ type: type, payload: payload }) 
