@@ -42,6 +42,8 @@ function handleJsonMessage(json: SocketMessage, ws) {
             break;
         case 'getUsers':
             getUsers(json.payload, ws);
+        case 'directMessage':
+            handleDirectMessage(json.payload, ws);
         default:
             sendJsonTo(ws, {
                 type: 'message',
@@ -118,6 +120,10 @@ function handleIceCandidate(payload, ws) {
         type: 'iceFail',
         payload
     })
+}
+
+function handleDirectMessage(payload, ws) {
+    ws.send('working')
 }
 
 const getUsers = async (payload, ws) => {
