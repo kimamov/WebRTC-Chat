@@ -8,6 +8,7 @@ import ChatHeader from './ChatHeader';
 import ChatMessageList from './ChatMessageList';
 import ChatInput from './ChatInput';
 import { Socket } from 'net';
+import { resolve } from 'url';
 
 export interface MatchParams {
     id: string
@@ -27,9 +28,26 @@ export interface IAppState {
 export interface Message {
     from: string
     to: string
-    own?: boolean
     data: string
 }
+    
+function handleJsonMessage<T>(incomingMessage: MessageEvent, messageType: string):Promise<T>{
+    return new Promise((resolve,reject)=>{
+        if (typeof incomingMessage.data === 'string') {
+            try {
+                const message = JSON.parse(incomingMessage.data);
+                if (message.type === messageType) {
+                    resolve(message.payload)
+                }
+            } catch (e) {
+                console.log(e);
+                reject(e)
+            }
+        }
+    })
+}
+
+  
 
 
 export default class Chat extends Component<IAppProps, IAppState> {
@@ -38,12 +56,12 @@ export default class Chat extends Component<IAppProps, IAppState> {
         this.state = {
             textInput: '',
             messages: [
-                {from: 'kantemir', to: '1', own: true, data: 'hello world'},
-                {from: 'kantem', to: '1', own: false, data: 'hello world'},
-                {from: 'kantemir', to: '1', own: true, data: 'hello world'},
-                {from: 'kant', to: '1', own: false, data: 'hello world'},
-                {from: 'kan', to: '1', own: false, data: 'hello world'},
-                {from: 'kantemir', to: '1', own: true, data: 'hello world'},
+                {from: 'kantemir', to: '1',  data: 'hello world'},
+                {from: 'kantem', to: '1',  data: 'hello world'},
+                {from: 'kantemir', to: '1',  data: 'hello world'},
+                {from: 'kant', to: '1',  data: 'hello world'},
+                {from: 'kan', to: '1',  data: 'hello world'},
+                {from: 'kantemir', to: '1',  data: 'hello world'},
             ]
         }
     }
@@ -52,7 +70,12 @@ export default class Chat extends Component<IAppProps, IAppState> {
 
         this.storeChatHisory(historyKey);
         this.getChatHistory(historyKey);
+        this.props.socket.onmessage=(message)=>
+            handleJsonMessage<Message>(message, 'directMessage')
+            .then((messageData: Message)=>this.setState({messages: [...this.state.messages, messageData]}))
+    
     }
+
     getChatHistory=(historyKey: string)=>{
         // get chat history from local storage of it exists
         const historyString=localStorage.getItem(historyKey);
@@ -61,7 +84,13 @@ export default class Chat extends Component<IAppProps, IAppState> {
                 const history=JSON.parse(historyString);
                 // if its valid data set the messages state with it
                 if(Array.isArray(history)){
-                    this.setState({messages: history})
+                    this.setState({messages: history.map((message)=>{
+                            if(typeof message.data === 'string' && message.data!==''){
+                                return message
+                            }
+                        })
+                        }
+                    )
                 }
             } catch (error) {
                 console.log(error)
@@ -72,7 +101,6 @@ export default class Chat extends Component<IAppProps, IAppState> {
         // store chat history inside local storage
         window.addEventListener('beforeunload',()=>{
             localStorage.setItem(historyKey, JSON.stringify(this.state.messages));
-
         })
     }
     onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -82,10 +110,11 @@ export default class Chat extends Component<IAppProps, IAppState> {
         >)
     sendMessage=(message: string)=>{
         const {socket}=this.props;
-        /* socket.send(
-            jsonMessage('')
-        ) */
-        this.setState({messages: [...this.state.messages, {from: 'kantemir', to: '1', own: true, data: message}]})
+        if(!message || !socket) return;
+        socket.send(jsonMessage('directMessage', {
+            to: this.props.match.params.id,
+            data: message 
+        }))
     }
 
     public render() {

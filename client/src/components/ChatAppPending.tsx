@@ -1,16 +1,24 @@
 import React from 'react'
-import { Box, Typography } from '@material-ui/core'
+import { Box, Typography, Button } from '@material-ui/core'
 
 interface Props {
-    socketState: string
+    socketState: string,
+    reconnect():void
 }
 
-const ChatAppPending = ({ socketState }: Props) => {
+const ChatAppPending = ({ socketState, reconnect }: Props) => {
     return (
-        <Box>
+        <Box marginTop={6}>
             <Typography>
                 {socketState}
             </Typography>
+            <Button 
+                onClick={reconnect}
+                variant='contained'
+                color='primary'
+            >
+                reconnect
+            </Button>
         </Box>
     )
 }

@@ -61,6 +61,11 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
     >)
 
   componentDidMount() {
+    this.connectToSocket();
+  }
+
+  connectToSocket=()=>{
+    // just a stupid wrapper to make passing the function easier
     this.createSocketConnection(this.context?.state?.user?.username, "kantemir");
   }
 
@@ -261,6 +266,6 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
       </Box>
     )
     // for any other case than socket==="OPEN" do error, loading and reconnect handeling
-    return <ChatAppPending socketState={this.state.socketState} />
+    return <ChatAppPending socketState={this.state.socketState} reconnect={this.connectToSocket}/>
   }
 }

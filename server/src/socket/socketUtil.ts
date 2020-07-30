@@ -125,7 +125,22 @@ function handleIceCandidate(payload, ws) {
 }
 
 function handleDirectMessage(payload, ws) {
-    ws.send('working')
+    const targetSocket = ConnectedSockets.get(payload.to);
+    if(targetSocket){
+        return sendJsonTo(targetSocket, {
+            type: 'directMessage',
+            payload: {
+                from: 'kantemir',
+                to: payload.to,
+                data: payload.data
+            }
+        })
+    }
+    ws.send(jsonMessage('directMessageFailed', {
+        from: 'kantemir',
+        to: payload.to,
+        data: payload.data
+    }))
 }
 
 const getUsers = async (payload, ws) => {
