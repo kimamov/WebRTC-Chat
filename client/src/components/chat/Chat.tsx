@@ -48,9 +48,14 @@ export default class Chat extends Component<IAppProps, IAppState> {
         }
     }
     componentDidMount(){
+        const historyKey: string=`chatAppHistory_${this.props.match.params.id}`;
+
+        this.storeChatHisory(historyKey);
+        this.getChatHistory(historyKey);
+    }
+    getChatHistory=(historyKey: string)=>{
         // get chat history from local storage of it exists
-        const { id } = this.props.match.params;
-        const historyString=localStorage.getItem(`chatAppHistory_${id}`);
+        const historyString=localStorage.getItem(historyKey);
         if(historyString){
             try {
                 const history=JSON.parse(historyString);
@@ -63,17 +68,24 @@ export default class Chat extends Component<IAppProps, IAppState> {
             }
         }
     }
+    storeChatHisory=(historyKey: string)=>{
+        // store chat history inside local storage
+        window.addEventListener('beforeunload',()=>{
+            localStorage.setItem(historyKey, JSON.stringify(this.state.messages));
+
+        })
+    }
     onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
         this.setState(({ [e.target.name]: e.target.value } as unknown) as Pick<
             IAppState,
             keyof IAppState
         >)
     sendMessage=(message: string)=>{
-        alert(message)
         const {socket}=this.props;
         /* socket.send(
             jsonMessage('')
         ) */
+        this.setState({messages: [...this.state.messages, {from: 'kantemir', to: '1', own: true, data: message}]})
     }
 
     public render() {

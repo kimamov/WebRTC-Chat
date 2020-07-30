@@ -9,7 +9,10 @@ const ChatInput = ({sendMessage}: Props) => {
     const [value, setValue]=useState('');
     return (
         <Box>
-            <form onSubmit={()=>sendMessage(value)}>
+            <form onSubmit={(e)=>{
+                    e.preventDefault();
+                    sendMessage(value)
+                }}>
                 <TextField 
                     value={value}
                     onChange={(e)=>setValue(e.target.value)}
