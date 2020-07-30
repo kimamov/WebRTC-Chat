@@ -42,8 +42,10 @@ function handleJsonMessage(json: SocketMessage, ws) {
             break;
         case 'getUsers':
             getUsers(json.payload, ws);
+            break;
         case 'directMessage':
             handleDirectMessage(json.payload, ws);
+            break;
         default:
             sendJsonTo(ws, {
                 type: 'message',

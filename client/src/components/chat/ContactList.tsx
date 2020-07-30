@@ -56,7 +56,7 @@ const ContactList: React.FC<Props> = ({ ws }) => {
     if (friendList && friendList.length) return (
         <List>
             {friendList.map((friend) => (
-                <Link to={`/chat/${friend.id}`}>
+                <Link key={Math.random()} to={`/chat/${friend.id}`}>
                     <ListItem button key={friend.id + '_' + Date.now()}>
                         <ListItemAvatar>
                             <Avatar></Avatar>

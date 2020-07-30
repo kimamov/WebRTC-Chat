@@ -10,7 +10,7 @@ interface Props {
 const ChatMessageList = ({messages=[]}: Props) => {
     return (
         <Box flex={1} flexDirection='column' display='flex' maxWidth='40rem'> {/* chat messages */}
-            {messages.map(message=><ChatMessage message={message}/>)}
+            {messages.map(message=><ChatMessage key={Math.random()} message={message}/>)}
         </Box>
     )
 }

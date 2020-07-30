@@ -4,7 +4,7 @@ import { Box } from '@material-ui/core'
 import { Context, Store } from '../../state/state';
 import { History } from 'history'
 import ChatAppDrawer from './ChatAppDrawer';
-import Chat from './Chat'
+import Chat, { Message } from './Chat'
 import ChatAppPending from './../ChatAppPending';
 import { BasicUser, WebSocketMessage } from '../../types/types'
 import { jsonMessage } from '../../api/socket';
@@ -24,8 +24,14 @@ export interface IAppState {
   callingUser: any
   socketState: string
   friendList: BasicUser[]
+  /* chatHistories: ChatHistoriesObject[] */
 }
 
+
+
+export interface ChatHistoriesObject {
+  [key: string]: Message[]
+}
 
 export default class ChatApp extends Component<IAppProps, IAppState> {
   /* component holding all the chats and active states 
@@ -44,7 +50,8 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
       targetUserId: '',
       callingUser: null,
       socketState: 'STARTING',
-      friendList: []
+      friendList: [],
+      /* chatHistories: [{"test": [], "passed": []}] */
     }
   }
   onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -90,6 +97,7 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
       console.log(incomingMessage);
       if (typeof incomingMessage.data === 'string') {
         try {
+          console.log(incomingMessage.data)
           const message = JSON.parse(incomingMessage.data);
           if (message.type === "offer") {
             this.setState({
