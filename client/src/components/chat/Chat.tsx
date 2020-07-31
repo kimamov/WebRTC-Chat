@@ -7,8 +7,7 @@ import { RouteComponentProps, match } from 'react-router-dom'
 import ChatHeader from './ChatHeader';
 import ChatMessageList from './ChatMessageList';
 import ChatInput from './ChatInput';
-import { Socket } from 'net';
-import { resolve } from 'url';
+
 
 export interface MatchParams {
     id: string
