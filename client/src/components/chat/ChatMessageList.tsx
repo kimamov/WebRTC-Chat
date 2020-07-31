@@ -5,12 +5,13 @@ import { Message } from './Chat'
 
 interface Props {
     messages: Message[]
+    userId: string
 }
 
-const ChatMessageList = ({messages=[]}: Props) => {
+const ChatMessageList = ({messages=[], userId}: Props) => {
     return (
         <Box flex={1} flexDirection='column' display='flex' maxWidth='40rem'> {/* chat messages */}
-            {messages.map(message=><ChatMessage key={Math.random()} message={message}/>)}
+            {messages.map(message=><ChatMessage userId={userId} key={Math.random()} message={message}/>)}
         </Box>
     )
 }

@@ -1,4 +1,5 @@
 import { ConnectedSockets } from '../index';
+import { Socket } from 'net';
 
 export interface SocketMessage {
     type: string
@@ -135,14 +136,16 @@ function handleDirectMessage(payload, ws) {
         })) 
     }
     if(targetSocket){
-        return sendJsonTo(targetSocket, {
-            type: 'directMessage',
-            payload: {
+        const message=jsonMessage('directMessage',{
                 from: id,
                 to: payload.to,
                 data: payload.data
-            }
-        })
+            })
+        // send message to target user
+        targetSocket.send(message)
+        // return message to sending usert. TODO create custom event to save data
+        return  ws.send(message)
+        
     }
     ws.send(jsonMessage('directMessageFailed', {
         from: id,

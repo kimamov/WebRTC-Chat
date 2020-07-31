@@ -6,6 +6,7 @@ import ChatHeader from './ChatHeader';
 import ChatMessageList from './ChatMessageList';
 import ChatInput from './ChatInput';
 import { User } from '../../types/types';
+import { userInfo } from 'os';
 
 
 export interface MatchParams {
@@ -124,7 +125,7 @@ export default class Chat extends Component<IAppProps, IAppState> {
         return (
             <Box flex={1} display='flex' paddingTop={6} flexDirection='column' minHeight='100vh'>
                 <ChatHeader id={id}/>
-                <ChatMessageList messages={this.state.messages}/>
+                <ChatMessageList userId={this.props.user.id} messages={this.state.messages}/>
                 <ChatInput sendMessage={this.sendMessage}/>
             </Box>
         )

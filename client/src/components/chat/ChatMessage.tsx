@@ -4,6 +4,7 @@ import { Message } from './Chat'
 
 interface Props {
     message: Message
+    userId: string
 }
 
 const MessageCard=withStyles((theme: Theme)=>({
@@ -36,12 +37,12 @@ const ForeignMessage=withStyles((theme: Theme)=>({
 }))(MessageCard)
 
 
-const isOwnMessage=(message: Message)=>message.from === 'kantemir'
+const isOwnMessage=(message: Message, userId: string)=>message.from === userId
 
 //const setMessagePosition=(message: Message)=>isOwnMessage(message)? {marginRight: '1rem', marginLeft: 'auto'} : {marginRight: 'auto', marginLeft: '1rem'}
 
-const ChatMessage = ({message}: Props) => {
-    if(isOwnMessage(message)) return (
+const ChatMessage = ({message, userId}: Props) => {
+    if(isOwnMessage(message, userId)) return (
         <OwnMessage>
             {message.data}
         </OwnMessage>
