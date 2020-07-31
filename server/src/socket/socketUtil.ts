@@ -126,20 +126,28 @@ function handleIceCandidate(payload, ws) {
 
 function handleDirectMessage(payload, ws) {
     const targetSocket = ConnectedSockets.get(payload.to);
+    const {id}=ws.user;
+    if(!id){
+        ws.send(jsonMessage('directMessageFailed', {
+            from: 'unknown_user',
+            to: payload.to,
+            data: 'could not get user id'
+        })) 
+    }
     if(targetSocket){
         return sendJsonTo(targetSocket, {
             type: 'directMessage',
             payload: {
-                from: 'kantemir',
+                from: id,
                 to: payload.to,
                 data: payload.data
             }
         })
     }
     ws.send(jsonMessage('directMessageFailed', {
-        from: 'kantemir',
+        from: id,
         to: payload.to,
-        data: payload.data
+        data: 'could not find target user :( you can only message online users'
     }))
 }
 
