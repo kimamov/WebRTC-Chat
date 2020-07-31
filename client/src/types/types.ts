@@ -11,6 +11,11 @@ export interface BasicUser {
   online: boolean
 }
 
+export interface User {
+  id: string
+  username: string
+}
+
 export interface WebSocketMessage {
   type: string,
   payload: any

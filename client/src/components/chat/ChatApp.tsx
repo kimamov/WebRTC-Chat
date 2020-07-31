@@ -251,6 +251,7 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
   }
   // maybe create a socket context
   public render() {
+    const {user}=this.context.state
     if (this.socket && this.state.socketState === "OPEN") return (
       <Box display='flex'>
         <ChatAppDrawer ws={this.socket} />
@@ -258,6 +259,7 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
           render={(props) =>
             <Chat
               socket={this.socket as WebSocket}
+              user={user}
               {...props}
             />
           }

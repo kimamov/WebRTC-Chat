@@ -1,14 +1,12 @@
 import React, { Component, Context as ContextInterface } from 'react'
-import SimplePeer from 'simple-peer'
-import { TextField, Button, Box, Card, Typography } from '@material-ui/core'
-import { Context, Store } from '../../state/state';
-import { initSocket, jsonMessage } from '../../api/socket'
-import { RouteComponentProps, match } from 'react-router-dom'
+import {  Box } from '@material-ui/core'
+import {  jsonMessage } from '../../api/socket'
+import { RouteComponentProps } from 'react-router-dom'
 import ChatHeader from './ChatHeader';
 import ChatMessageList from './ChatMessageList';
 import ChatInput from './ChatInput';
-import { Socket } from 'net';
-import { resolve } from 'url';
+import { User } from '../../types/types';
+
 
 export interface MatchParams {
     id: string
@@ -16,6 +14,7 @@ export interface MatchParams {
 
 export interface IAppProps extends RouteComponentProps<MatchParams> {
     socket: WebSocket
+    user: User
 }
 
 
@@ -110,10 +109,11 @@ export default class Chat extends Component<IAppProps, IAppState> {
             keyof IAppState
         >)
     sendMessage=(message: string)=>{
-        const {socket}=this.props;
+        const {socket, user, match}=this.props;
         if(!message || !socket) return;
         socket.send(jsonMessage('directMessage', {
-            to: this.props.match.params.id,
+            from: user.id,
+            to: match.params.id,
             data: message 
         }))
     }
