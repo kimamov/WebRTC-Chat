@@ -10,8 +10,10 @@ interface Props {
 
 const ChatMessageList = ({messages=[], userId}: Props) => {
     return (
-        <Box flex={1} flexDirection='column' display='flex' maxWidth='40rem'> {/* chat messages */}
-            {messages.map(message=><ChatMessage userId={userId} key={Math.random()} message={message}/>)}
+        <Box flex={1}  overflow='auto'> {/* chat messages */}
+            <Box flexDirection='column' display='flex' maxWidth='40rem' paddingTop={2} paddingBottom={4}>
+                {messages.map(message=><ChatMessage userId={userId} key={Math.random()} message={message}/>)}
+            </Box>
         </Box>
     )
 }

@@ -125,6 +125,18 @@ function handleIceCandidate(payload, ws) {
     })
 }
 
+interface directMessagePayload {
+    from: string,
+    to: string,
+    data: any,
+    timeStamp: number
+}
+
+interface directMessage  {
+    type: 'directMessage',
+    payload: directMessagePayload
+}
+
 function handleDirectMessage(payload, ws) {
     const targetSocket = ConnectedSockets.get(payload.to);
     const {id}=ws.user;
@@ -136,15 +148,22 @@ function handleDirectMessage(payload, ws) {
         })) 
     }
     if(targetSocket){
-        const message=jsonMessage('directMessage',{
-                from: id,
-                to: payload.to,
-                data: payload.data
-            })
+        const messageObject: directMessage={type: 'directMessage', payload: {
+            from: id,
+            to: payload.to,
+            data: payload.data,
+            timeStamp: Date.now()
+        }}
         // send message to target user
-        targetSocket.send(message)
+        targetSocket.send(JSON.stringify(messageObject))
         // return message to sending usert. TODO create custom event to save data
-        return  ws.send(message)
+        //messageObject.payload.ownMessage=true;
+        return  ws.send(jsonMessage('directMessageSucces', {
+            from: id,
+            to: payload.to,
+            data: payload.data,
+            timeStamp: Date.now()
+        }))
         
     }
     ws.send(jsonMessage('directMessageFailed', {

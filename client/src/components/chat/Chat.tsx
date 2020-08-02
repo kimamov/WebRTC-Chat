@@ -7,6 +7,7 @@ import ChatMessageList from './ChatMessageList';
 import ChatInput from './ChatInput';
 import { User } from '../../types/types';
 import { userInfo } from 'os';
+import { ChatHistoriesObject } from './ChatApp';
 
 
 export interface MatchParams {
@@ -16,19 +17,20 @@ export interface MatchParams {
 export interface IAppProps extends RouteComponentProps<MatchParams> {
     socket: WebSocket
     user: User
+    chatHistories: ChatHistoriesObject
 }
 
 
 
 export interface IAppState {
     textInput: string
-    messages: Message[]
 }
 
 export interface Message {
     from: string
     to: string
     data: string
+    ownMessage?: boolean
 }
     
 function handleJsonMessage<T>(incomingMessage: MessageEvent, messageType: string):Promise<T>{
@@ -55,29 +57,23 @@ export default class Chat extends Component<IAppProps, IAppState> {
         super(props)
         this.state = {
             textInput: '',
-            messages: [
-                {from: 'kantemir', to: '1',  data: 'hello world'},
-                {from: 'kantem', to: '1',  data: 'hello world'},
-                {from: 'kantemir', to: '1',  data: 'hello world'},
-                {from: 'kant', to: '1',  data: 'hello world'},
-                {from: 'kan', to: '1',  data: 'hello world'},
-                {from: 'kantemir', to: '1',  data: 'hello world'},
-            ]
         }
     }
     componentDidMount(){
         const historyKey: string=`chatAppHistory_${this.props.match.params.id}`;
 
-        this.storeChatHisory(historyKey);
-        this.getChatHistory(historyKey);
+        /* this.storeChatHisory(historyKey);
+        this.getChatHistory(historyKey); */
         // add event handler to receive direct messages
-        this.props.socket.onmessage=(message)=>
+     /*    this.props.socket.onmessage=(message)=>
             handleJsonMessage<Message>(message, 'directMessage')
             .then((messageData: Message)=>this.setState({messages: [...this.state.messages, messageData]}))
-    
+     */
     }
 
-    getChatHistory=(historyKey: string)=>{
+
+
+    /* getChatHistory=(historyKey: string)=>{
         // get chat history from local storage of it exists
         const historyString=localStorage.getItem(historyKey);
         if(historyString){
@@ -97,13 +93,13 @@ export default class Chat extends Component<IAppProps, IAppState> {
                 console.log(error)
             }
         }
-    }
-    storeChatHisory=(historyKey: string)=>{
+    } */
+    /* storeChatHisory=(historyKey: string)=>{
         // store chat history inside local storage
         window.addEventListener('beforeunload',()=>{
             localStorage.setItem(historyKey, JSON.stringify(this.state.messages));
         })
-    }
+    } */
     onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
         this.setState(({ [e.target.name]: e.target.value } as unknown) as Pick<
             IAppState,
@@ -121,11 +117,12 @@ export default class Chat extends Component<IAppProps, IAppState> {
 
     public render() {
         const { id } = this.props.match.params;
+        const messages=this.props.chatHistories[id] || [];
         console.log(id)
         return (
-            <Box flex={1} display='flex' paddingTop={6} flexDirection='column' minHeight='100vh'>
+            <Box flex={1} display='flex' paddingTop={6} flexDirection='column' height='100vh'>
                 <ChatHeader id={id}/>
-                <ChatMessageList userId={this.props.user.id} messages={this.state.messages}/>
+                <ChatMessageList userId={this.props.user.id} messages={messages}/>
                 <ChatInput sendMessage={this.sendMessage}/>
             </Box>
         )
