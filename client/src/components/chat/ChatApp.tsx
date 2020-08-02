@@ -99,7 +99,7 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
     socket.onmessage = (incomingMessage: MessageEvent) => {
       // add call / offer event to the socket. 
       // Could do that inside initSocket but cba adding callbacks and promises are even more code :<
-      console.log(incomingMessage);
+      //console.log(incomingMessage);
       if (typeof incomingMessage.data === 'string') {
         try {
           console.log(incomingMessage.data)
@@ -109,8 +109,9 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
               callingUser: message.payload
             })
           }else if(message.type==="directMessage"){
-            console.log("reached")
-            this.handleDirectMessages(message.payload)
+            this.handleReceivingDm(message.payload)
+          }else if(message.type==="directMessageSucces"){
+            this.handleOwnDm(message.payload)
           }
         }
         catch (e) {
@@ -149,18 +150,27 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
   }
 
 
-  handleDirectMessages=(message: Message)=>{
-    const from=message.from;
-    if(!from) return;
-    let messages=this.state.chatHistories[from];
+  handleDirectMessages=(message: Message, returning: boolean)=>{
+    const {from, to, data}=message;
+    //if(!from || !to || !data) return;
+    let bucket=returning? to : from;
+    let messages=this.state.chatHistories[bucket];
     if(messages){
       messages=[...messages, message];
     }else {
       messages=[message];
     }
     this.setState({
-      chatHistories: {...this.state.chatHistories, [from]: messages}
+      chatHistories: {...this.state.chatHistories, [bucket]: messages}
     })
+  }
+
+  handleReceivingDm=(message: Message)=>{
+    if(message.from==message.to) return;
+    this.handleDirectMessages(message, false);
+  }
+  handleOwnDm=(message: Message)=>{
+    this.handleDirectMessages(message, true);
   }
 
   createPeer = (targetUserId: string, userId: string) => {
@@ -254,17 +264,7 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
 
   initConnection = () => this.createPeer(this.context.user.id, this.state.targetUserId)
 
-  onSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    this.signalOrMessage()
-  }
-
-  signalOrMessage = () => {
-    if (!this.peer) return
-    console.log(this.state.connected)
-    if (this.state.connected || true) return this.peer.send(this.state.textInput)
-    //this.peer.signal(JSON.parse(this.state.textInput))
-  }
+  
   // maybe create a socket context
   public render() {
     console.log(this.state.chatHistories)
@@ -277,6 +277,7 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
             <Chat
               socket={this.socket as WebSocket}
               user={user}
+              chatHistories={this.state.chatHistories}
               {...props}
             />
           }
