@@ -24,7 +24,7 @@ export interface IAppState {
   callingUser: any
   socketState: string
   friendList: BasicUser[]
-  /* chatHistories: ChatHistoriesObject[] */
+  chatHistories: ChatHistoriesObject
 }
 
 
@@ -51,7 +51,7 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
       callingUser: null,
       socketState: 'STARTING',
       friendList: [],
-      /* chatHistories: [{"test": [], "passed": []}] */
+      chatHistories: {"test": [], "passed": []}
     }
   }
   onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -108,6 +108,9 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
             this.setState({
               callingUser: message.payload
             })
+          }else if(message.type==="directMessage"){
+            console.log("reached")
+            this.handleDirectMessages(message.payload)
           }
         }
         catch (e) {
@@ -146,6 +149,19 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
   }
 
 
+  handleDirectMessages=(message: Message)=>{
+    const from=message.from;
+    if(!from) return;
+    let messages=this.state.chatHistories[from];
+    if(messages){
+      messages=[...messages, message];
+    }else {
+      messages=[message];
+    }
+    this.setState({
+      chatHistories: {...this.state.chatHistories, [from]: messages}
+    })
+  }
 
   createPeer = (targetUserId: string, userId: string) => {
     if (!targetUserId || !userId) {
@@ -251,6 +267,7 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
   }
   // maybe create a socket context
   public render() {
+    console.log(this.state.chatHistories)
     const {user}=this.context.state
     if (this.socket && this.state.socketState === "OPEN") return (
       <Box display='flex'>

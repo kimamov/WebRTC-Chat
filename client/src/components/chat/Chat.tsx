@@ -71,10 +71,10 @@ export default class Chat extends Component<IAppProps, IAppState> {
         this.storeChatHisory(historyKey);
         this.getChatHistory(historyKey);
         // add event handler to receive direct messages
-        this.props.socket.onmessage=(message)=>
+     /*    this.props.socket.onmessage=(message)=>
             handleJsonMessage<Message>(message, 'directMessage')
             .then((messageData: Message)=>this.setState({messages: [...this.state.messages, messageData]}))
-    
+     */
     }
 
     getChatHistory=(historyKey: string)=>{
