@@ -22,10 +22,12 @@ export interface IAppState {
   connected: boolean
   targetUserId: string
   callingUser: any
-  socketState: string
+  socketState: SocketState
   friendList: BasicUser[]
   chatHistories: ChatHistoriesObject
 }
+
+export type SocketState= 'STARTING' | 'OPEN' | 'ERROR' | 'CLOSED'
 
 
 
@@ -51,7 +53,7 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
       callingUser: null,
       socketState: 'STARTING',
       friendList: [],
-      chatHistories: {"test": [], "passed": []}
+      chatHistories: this.recoverChatHistory()
     }
   }
   onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -62,7 +64,29 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
 
   componentDidMount() {
     this.connectToSocket();
+    window.addEventListener('beforeunload', this.storeChatHistory)
+
   }
+
+
+storeChatHistory=()=>{
+  const {id}=this.context.state.user
+  localStorage.setItem('chat_chat_history_'+id, JSON.stringify(this.state.chatHistories));
+}
+
+recoverChatHistory=(): ChatHistoriesObject | {}=>{
+  // todo maybe add encryption
+  const {id}=this.context.state.user  
+  const historyString=localStorage.getItem('chat_chat_history_'+id);
+  if(!historyString) return {};
+  try {
+      const history=JSON.parse(historyString);
+      return history;
+  } catch (error) {
+      console.log(error);
+      return {}
+  }
+}
 
   connectToSocket=()=>{
     // just a stupid wrapper to make passing the function easier
@@ -289,3 +313,6 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
     return <ChatAppPending socketState={this.state.socketState} reconnect={this.connectToSocket}/>
   }
 }
+
+
+
