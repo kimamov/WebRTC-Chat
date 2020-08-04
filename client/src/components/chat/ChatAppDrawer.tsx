@@ -10,6 +10,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import ContactList from './ContactList';
+import { ChatHistoriesObject } from './ChatApp';
 
 interface Props {
     ws: WebSocket
@@ -47,7 +48,7 @@ export default function ChatAppDrawer({ ws }: Props) {
         >
             <Toolbar />
             <div className={classes.drawerContainer}>
-                <List>
+                {/* <List>
                     {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
                         <ListItem button key={text}>
                             <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
@@ -55,9 +56,11 @@ export default function ChatAppDrawer({ ws }: Props) {
                         </ListItem>
                     ))}
                 </List>
-                <Divider />
+                <Divider /> */}
                 <ContactList ws={ws} />
             </div>
         </Drawer>
     );
 }
+
+
