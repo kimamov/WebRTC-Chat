@@ -17,11 +17,7 @@ export interface IAppProps {
 }
 
 export interface IAppState {
-  textInput: string
-  data: string
   connected: boolean
-  targetUserId: string
-  callingUser: any
   socketState: SocketState
   friendList: BasicUser[]
   chatHistories: ChatHistoriesObject
@@ -46,14 +42,11 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
   constructor(props: IAppProps) {
     super(props)
     this.state = {
-      textInput: '',
-      data: '',
       connected: false,
-      targetUserId: '',
-      callingUser: null,
       socketState: 'STARTING',
       friendList: [],
-      chatHistories: this.recoverChatHistory()
+      chatHistories: {},
+
     }
   }
   onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -65,7 +58,7 @@ export default class ChatApp extends Component<IAppProps, IAppState> {
   componentDidMount() {
     this.connectToSocket();
     window.addEventListener('beforeunload', this.storeChatHistory)
-
+    this.recoverChatHistory();
   }
 
 
@@ -76,6 +69,7 @@ storeChatHistory=()=>{
 
 recoverChatHistory=(): ChatHistoriesObject | {}=>{
   // todo maybe add encryption
+  console.log(this.context)
   const {id}=this.context.state.user  
   const historyString=localStorage.getItem('chat_chat_history_'+id);
   if(!historyString) return {};
@@ -197,105 +191,16 @@ recoverChatHistory=(): ChatHistoriesObject | {}=>{
     this.handleDirectMessages(message, true);
   }
 
-  createPeer = (targetUserId: string, userId: string) => {
-    if (!targetUserId || !userId) {
-      console.log("invalid arguments");
-      return;
-    }
-    this.peer = new SimplePeer({
-      initiator: true,
-      trickle: false,
-    })
-    this.peer.on('error', (err: Error) => console.log('error', err))
-
-    this.peer.on('signal', (data: any) => {
-      console.log('SIGNAL', data)
-      this.socket?.send(jsonMessage('offer',
-        {
-          target: targetUserId,
-          from: userId,
-          data: data
-        }))
-      this.setState({ data: JSON.stringify(data, null, 2) })
-    })
-
-    this.peer.on('connect', () => {
-      console.log('CONNECT')
-      this.setState({ connected: true, data: '' })
-      this.peer.send('any' + Math.random())
-    })
-
-
-    this.peer.on('data', (data: any) => {
-      console.log('data: ' + data)
-      this.setState({ data: String(data) })
-    })
-
-    if (this.socket) {
-      this.socket.onmessage = (incomingMessage: MessageEvent) => {
-        if (typeof incomingMessage.data === 'string') {
-          try {
-            const message = JSON.parse(incomingMessage.data);
-            if (message.type === "answer") {
-              console.log(message)
-              this.peer.signal(message.payload.data)
-            }
-          } catch (e) {
-            console.log(e);
-          }
-        }
-      }
-    }
-  }
-
-  createTargetPeer = () => {
-    this.createPeer(this.state.targetUserId, this.context.state.user.id);
-  }
-  acceptPeer = () => {
-    this.addPeer(this.state.callingUser.from, this.context.state.user.id, this.state.callingUser.data);
-  }
-
-  addPeer = (targetUserId: string, userId: string, signal: any) => {
-    console.log(targetUserId, userId);
-    const peer = new SimplePeer({
-      initiator: false,
-      trickle: false,
-    })
-
-    peer.on('error', (err: Error) => console.log('error', err))
-
-    peer.on('signal', (data: any) => {
-      console.log('SIGNAL', data)
-      this.socket?.send(jsonMessage('answer',
-        {
-          target: targetUserId,
-          from: userId,
-          data: data
-        }
-      ))
-      this.setState({ data: JSON.stringify(data, null, 2) })
-    })
-
-
-    peer.on('data', (data: any) => {
-      console.log('data: ' + data)
-      this.setState({ data: String(data) })
-    })
-
-    peer.signal(signal);
-    return peer;
-  }
-
-  initConnection = () => this.createPeer(this.context.user.id, this.state.targetUserId)
-
   
   // maybe create a socket context
   public render() {
     console.log(this.state.chatHistories)
     const {user}=this.context.state
+    
     if (this.socket && this.state.socketState === "OPEN") return (
-      <Box display='flex'>
+      <Box display='flex'> {/* create another component to handle inner state */}
         <ChatAppDrawer ws={this.socket} />
+        
         <Route path="/chat/:id"
           render={(props) =>
             <Chat
