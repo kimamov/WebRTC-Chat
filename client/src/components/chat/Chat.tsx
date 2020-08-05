@@ -33,24 +33,6 @@ export interface Message {
     ownMessage?: boolean
 }
     
-function handleJsonMessage<T>(incomingMessage: MessageEvent, messageType: string):Promise<T>{
-    return new Promise((resolve,reject)=>{
-        if (typeof incomingMessage.data === 'string') {
-            try {
-                const message = JSON.parse(incomingMessage.data);
-                if (message.type === messageType) {
-                    resolve(message.payload)
-                }
-            } catch (e) {
-                console.log(e);
-                reject(e)
-            }
-        }
-    })
-}
-
-  
-
 
 export default class Chat extends Component<IAppProps, IAppState> {
     constructor(props: IAppProps) {
@@ -60,46 +42,9 @@ export default class Chat extends Component<IAppProps, IAppState> {
         }
     }
     componentDidMount(){
-        const historyKey: string=`chatAppHistory_${this.props.match.params.id}`;
-
-        /* this.storeChatHisory(historyKey);
-        this.getChatHistory(historyKey); */
-        // add event handler to receive direct messages
-     /*    this.props.socket.onmessage=(message)=>
-            handleJsonMessage<Message>(message, 'directMessage')
-            .then((messageData: Message)=>this.setState({messages: [...this.state.messages, messageData]}))
-     */
+        /* TODO get the chat history here */
     }
 
-
-
-    /* getChatHistory=(historyKey: string)=>{
-        // get chat history from local storage of it exists
-        const historyString=localStorage.getItem(historyKey);
-        if(historyString){
-            try {
-                const history=JSON.parse(historyString);
-                // if its valid data set the messages state with it
-                if(Array.isArray(history)){
-                    this.setState({messages: history.map((message)=>{
-                            if(typeof message.data === 'string' && message.data!==''){
-                                return message
-                            }
-                        })
-                        }
-                    )
-                }
-            } catch (error) {
-                console.log(error)
-            }
-        }
-    } */
-    /* storeChatHisory=(historyKey: string)=>{
-        // store chat history inside local storage
-        window.addEventListener('beforeunload',()=>{
-            localStorage.setItem(historyKey, JSON.stringify(this.state.messages));
-        })
-    } */
     onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
         this.setState(({ [e.target.name]: e.target.value } as unknown) as Pick<
             IAppState,

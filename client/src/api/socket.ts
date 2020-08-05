@@ -34,6 +34,23 @@ export function initSocket(username: string, password: string) {
     return socket;
 }
 
+function handleJsonMessage<T>(incomingMessage: MessageEvent, messageType: string):Promise<T>{
+    return new Promise((resolve,reject)=>{
+        if (typeof incomingMessage.data === 'string') {
+            try {
+                const message = JSON.parse(incomingMessage.data);
+                if (message.type === messageType) {
+                    resolve(message.payload)
+                }
+            } catch (e) {
+                console.log(e);
+                reject(e)
+            }
+        }
+    })
+}
+
+
 type JsonMessageTypes= 'offer' | 'answer' | 'iceCandidate' | 'getUsers' | 'directMessage' | 'message' | 'sendOfferSucces' | 'sendOfferFail' | 'returnUsers'
 
 
