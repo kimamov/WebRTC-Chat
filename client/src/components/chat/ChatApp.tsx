@@ -3,12 +3,11 @@ import SimplePeer from 'simple-peer'
 import { Box } from '@material-ui/core'
 import { Context, Store } from '../../state/state';
 import { History } from 'history'
-import ChatAppDrawer from './ChatAppDrawer';
-import Chat, { Message } from './Chat'
 import ChatAppPending from './../ChatAppPending';
-import { BasicUser, WebSocketMessage } from '../../types/types'
+import { BasicUser, WebSocketMessage, Message } from '../../types/types'
 import { jsonMessage } from '../../api/socket';
 import { Route } from 'react-router-dom';
+import ChatAppActive from './ChatAppActive';
 
 
 
@@ -126,11 +125,11 @@ recoverChatHistory=(): ChatHistoriesObject | {}=>{
             this.setState({
               callingUser: message.payload
             })
-          }else if(message.type==="directMessage"){
+          }/* else if(message.type==="directMessage"){
             this.handleReceivingDm(message.payload)
           }else if(message.type==="directMessageSucces"){
             this.handleOwnDm(message.payload)
-          }
+          } */
         }
         catch (e) {
           console.log(e);
@@ -168,7 +167,7 @@ recoverChatHistory=(): ChatHistoriesObject | {}=>{
   }
 
 
-  handleDirectMessages=(message: Message, returning: boolean)=>{
+  /* handleDirectMessages=(message: Message, returning: boolean)=>{
     const {from, to, data}=message;
     //if(!from || !to || !data) return;
     let bucket=returning? to : from;
@@ -190,7 +189,7 @@ recoverChatHistory=(): ChatHistoriesObject | {}=>{
   handleOwnDm=(message: Message)=>{
     this.handleDirectMessages(message, true);
   }
-
+ */
   
   // maybe create a socket context
   public render() {
@@ -198,21 +197,10 @@ recoverChatHistory=(): ChatHistoriesObject | {}=>{
     const {user}=this.context.state
     
     if (this.socket && this.state.socketState === "OPEN") return (
-      <Box display='flex'> {/* create another component to handle inner state */}
-        <ChatAppDrawer ws={this.socket} />
-        
-        <Route path="/chat/:id"
-          render={(props) =>
-            <Chat
-              socket={this.socket as WebSocket}
-              user={user}
-              chatHistories={this.state.chatHistories}
-              {...props}
-            />
-          }
-        />
-
-      </Box>
+      <ChatAppActive
+        socket={this.socket}
+        user={this.context.state.user}
+      />
     )
     // for any other case than socket==="OPEN" do error, loading and reconnect handeling
     return <ChatAppPending socketState={this.state.socketState} reconnect={this.connectToSocket}/>

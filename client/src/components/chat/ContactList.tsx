@@ -8,10 +8,10 @@ import { Link } from 'react-router-dom'
 
 
 interface Props {
-    ws: WebSocket
+    socket: WebSocket
 }
 
-const ContactList: React.FC<Props> = ({ ws }) => {
+const ContactList: React.FC<Props> = ({ socket }) => {
     // get active users via WebSocket
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<null | string>(null);
@@ -38,17 +38,17 @@ const ContactList: React.FC<Props> = ({ ws }) => {
                 }
             }
         }
-        ws.addEventListener('message', messageHandler);
+        socket.addEventListener('message', messageHandler);
 
         getActiveUsers();
         return () => {
-            ws.removeEventListener('message', messageHandler)
+            socket.removeEventListener('message', messageHandler)
         }
     }, [])
 
     const getActiveUsers = () => {
         setLoading(true);
-        ws.send(jsonMessage('getUsers', { useId: 2 }))
+        socket.send(jsonMessage('getUsers', { useId: 2 }))
     }
 
     if (error) return <Typography>error</Typography>

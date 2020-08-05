@@ -26,12 +26,7 @@ export interface IAppState {
     textInput: string
 }
 
-export interface Message {
-    from: string
-    to: string
-    data: string
-    ownMessage?: boolean
-}
+
     
 
 export default class Chat extends Component<IAppProps, IAppState> {

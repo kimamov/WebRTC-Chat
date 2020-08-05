@@ -13,7 +13,7 @@ import ContactList from './ContactList';
 import { ChatHistoriesObject } from './ChatApp';
 
 interface Props {
-    ws: WebSocket
+    socket: WebSocket
 }
 
 const drawerWidth = 240;
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-export default function ChatAppDrawer({ ws }: Props) {
+export default function ChatAppDrawer({ socket }: Props) {
     // todo switch this to and extendable drawer that overlaps the header
     const classes = useStyles();
 
@@ -48,16 +48,7 @@ export default function ChatAppDrawer({ ws }: Props) {
         >
             <Toolbar />
             <div className={classes.drawerContainer}>
-                {/* <List>
-                    {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                        <ListItem button key={text}>
-                            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                            <ListItemText primary={text} />
-                        </ListItem>
-                    ))}
-                </List>
-                <Divider /> */}
-                <ContactList ws={ws} />
+                <ContactList socket={socket} />
             </div>
         </Drawer>
     );
