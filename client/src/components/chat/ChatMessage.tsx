@@ -1,6 +1,7 @@
 import React from 'react'
 import { Card, withStyles, Theme } from '@material-ui/core'
-import { Message } from './Chat'
+import { Message } from '../../types/types'
+
 
 interface Props {
     message: Message

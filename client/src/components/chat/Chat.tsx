@@ -6,7 +6,6 @@ import ChatHeader from './ChatHeader';
 import ChatMessageList from './ChatMessageList';
 import ChatInput from './ChatInput';
 import { User } from '../../types/types';
-import { userInfo } from 'os';
 import { ChatHistoriesObject } from './ChatApp';
 
 

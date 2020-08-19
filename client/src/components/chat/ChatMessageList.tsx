@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box } from '@material-ui/core'
 import ChatMessage from './ChatMessage'
-import { Message } from './Chat'
+import { Message } from '../../types/types'
 
 interface Props {
     messages: Message[]
