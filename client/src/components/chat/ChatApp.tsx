@@ -193,10 +193,7 @@ recoverChatHistory=(): ChatHistoriesObject | {}=>{
  */
   
   // maybe create a socket context
-  public render() {
-    console.log(this.state.chatHistories)
-    const {user}=this.context.state
-    
+  public render() {    
     if (this.socket && this.state.socketState === "OPEN") return (
       <ChatAppActive
         socket={this.socket}
