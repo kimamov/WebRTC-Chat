@@ -7,6 +7,7 @@ import Nav from './components/Nav'
 import ProtectedRoute from './components/ProtectedRoute'
 import Notifications from './components/notifications/Notifications'
 import SignUp from './components/auth/Signup'
+import LandingPage from './pages/LandingPage'
 
 export interface IAppProps { }
 
@@ -24,7 +25,7 @@ export default class Routes extends Component<IAppProps, IAppState> {
           <SignUp />
         </Route>
         <Route path="/welcome">
-          <Typography>Welcome :)</Typography>
+          <LandingPage/>
         </Route>
         <ProtectedRoute redirectPath="/welcome" component={ChatApp} />
       </Switch>
