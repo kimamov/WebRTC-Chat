@@ -121,11 +121,12 @@ recoverChatHistory=(): ChatHistoriesObject | {}=>{
         try {
           console.log(incomingMessage.data)
           const message = JSON.parse(incomingMessage.data);
+          /*
           if (message.type === "offer") {
             this.setState({
               callingUser: message.payload
             })
-          }/* else if(message.type==="directMessage"){
+          } else if(message.type==="directMessage"){
             this.handleReceivingDm(message.payload)
           }else if(message.type==="directMessageSucces"){
             this.handleOwnDm(message.payload)
@@ -192,10 +193,7 @@ recoverChatHistory=(): ChatHistoriesObject | {}=>{
  */
   
   // maybe create a socket context
-  public render() {
-    console.log(this.state.chatHistories)
-    const {user}=this.context.state
-    
+  public render() {    
     if (this.socket && this.state.socketState === "OPEN") return (
       <ChatAppActive
         socket={this.socket}

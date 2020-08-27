@@ -1,12 +1,12 @@
 import React, { Component, Context as ContextInterface } from 'react'
 import {  Box } from '@material-ui/core'
-import {  jsonMessage } from '../../api/socket'
+import {  jsonMessage } from '../api/socket'
 import { RouteComponentProps } from 'react-router-dom'
-import ChatHeader from './ChatHeader';
-import ChatMessageList from './ChatMessageList';
-import ChatInput from './ChatInput';
-import { User } from '../../types/types';
-import { ChatHistoriesObject } from './ChatApp';
+import ChatHeader from '../components/chat/ChatHeader';
+import ChatMessageList from '../components/chat/ChatMessageList';
+import ChatInput from '../components/chat/ChatInput';
+import { User } from '../types/types';
+import { ChatHistoriesObject } from '../components/chat/ChatApp';
 
 
 export interface MatchParams {
