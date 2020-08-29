@@ -15,6 +15,7 @@ interface Props {
 
 const ChatAppActive = ({socket, user}: Props) => {
     const [chatHistories, setHistories]=useState({})
+    const [activeCall, setActiveCall]=useState(null)
     return (
       <Box display='flex'> {/* create another component to handle inner state */}
         <ChatAppDrawer socket={socket} />
